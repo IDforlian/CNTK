@@ -112,6 +112,7 @@
     <ClCompile Include="..\..\..\Source\CNTK\BrainScript\BrainScriptTest.cpp" />
     <ClCompile Include="..\..\..\Source\Common\Config.cpp" />
     <ClCompile Include="..\..\..\Source\Common\DataReader.cpp" />
+    <ClCompile Include="..\..\..\Source\Common\CompositeDataReader.cpp" />
     <ClCompile Include="..\..\..\Source\Common\DataWriter.cpp" />
     <ClCompile Include="..\..\..\Source\Common\ExceptionWithCallStack.cpp" />
     <ClCompile Include="..\..\..\Source\Common\MPIWrapper.cpp" />

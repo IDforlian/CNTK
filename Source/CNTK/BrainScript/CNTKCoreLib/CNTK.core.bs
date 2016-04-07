@@ -29,10 +29,10 @@ IsSameObject(a,b) = new CompareFunction [ what = 'IsSameObject' ; args = (a : b)
 # ComputationNodes
 ##############################################################################
 
-LearnableParameter (outputDim, inputDim, learningRateMultiplier = 1.0, init = 'uniform'/*|fixedValue|gaussian|fromFile*/, initValueScale = 1, value = 0, initFromFilePath = '', initFromLiteral = '', initOnCPUOnly=true, randomSeed=-1, tag='') = new ComputationNode [ operation = 'LearnableParameter' ; shape = new TensorShape [ dims = (outputDim : inputDim) ] /*plus the function args*/ ]
+LearnableParameter(outputDim, inputDim, learningRateMultiplier = 1.0, init = 'uniform'/*|fixedValue|gaussian|fromFile|fromSmap|fromFst*/, initValueScale = 1, value = 0, initFromFilePath = '', initFromLiteral = '', initOnCPUOnly=true, randomSeed=-1, fstFilePath = '', smapFilePath = '', isSparse = false, selfTransitionProbability = 1.0, forwardTransitionProbability = 1.0, tag='') = new ComputationNode [ operation = 'LearnableParameter' ; shape = new TensorShape [ dims = (outputDim : inputDim) ] /*plus the function args*/ ]
 Parameter = LearnableParameter // deprecated 
 # TODO: make Parameter take tensor dims?
-ParameterTensor(dims, learningRateMultiplier = 1.0, init = 'uniform'/*|fixedValue|gaussian|fromFile*/, initValueScale = 1, value = 0, initFromFilePath = '', initFromLiteral = '', initOnCPUOnly=true, randomSeed=-1, tag='') = new ComputationNode [ operation = 'LearnableParameter' ; shape = new TensorShape [ /*dims*/ ] /*plus the function args*/ ]
+ParameterTensor(dims, learningRateMultiplier = 1.0, init = 'uniform'/*|fixedValue|gaussian|fromFile*/, initValueScale = 1, value = 0, initFromFilePath = '', initFromLiteral = '', initOnCPUOnly=true, randomSeed=-1, isSparse=false, tag='') = new ComputationNode [ operation = 'LearnableParameter' ; shape = new TensorShape [ /*dims*/ ] /*plus the function args*/ ]
 ConstantFromString(literal, tag='') = ParameterTensor((0)/*dim, will be inferred*/, init = 'fromLiteral', initFromLiteral = literal, learningRateMultiplier = 0.0)
 DynamicAxis(tag='') = new ComputationNode [ operation = 'DynamicAxis' ; /*plus the function args*/  ]
 Input(dims, dynamicAxis='', tag='feature') = new ComputationNode [ operation = 'InputValue' ; shape = new TensorShape [ /*dims*/ ] ; isImage = false /*plus the function args*/ ]
@@ -106,6 +106,7 @@ CrossEntropyWithSoftmax(labelVectorSequence, outProbVectorSequence, tag='') = ne
 DiagTimes(diagonalMatrixAsColumnVector, matrix, tag='') = new ComputationNode [ operation = 'DiagTimes' ; inputs = (diagonalMatrixAsColumnVector : matrix) /*plus the function args*/ ]
 // TODO: DiagTimes = ElementTimes
 Dropout(activationVectorSequence, tag='') = new ComputationNode [ operation = 'Dropout' ; inputs = activationVectorSequence /*plus the function args*/ ]
+DummyCriterion(objectives, derivatives, prediction, tag='') = new ComputationNode [ operation = 'DummyCriterion' ; inputs = (objectives : derivatives : prediction) /*plus the function args*/ ]
 ElementTimes(aMatrix, anotherMatrix, tag='') = new ComputationNode [ operation = 'ElementTimes' ; inputs = (aMatrix : anotherMatrix) /*plus the function args*/ ]
 ElementDivide(aMatrix, anotherMatrix, tag='') = ElementTimes(aMatrix, Reciprocal(anotherMatrix), tag=tag)
 ErrorPrediction(labelVectorSequence, outVectorSequence, tag='') = new ComputationNode [ operation = 'ErrorPrediction' ; inputs = (labelVectorSequence : outVectorSequence) /*plus the function args*/ ]
@@ -114,6 +115,7 @@ GatherPacked(indexSequence, sourceData, tag='') = new ComputationNode [ operatio
 GMMLogLikelihood(unnormalizedPriorVector, meansAsRows, logStdDevAsRows, dataVectorSequence, tag='') = new ComputationNode [ operation = 'GMMLogLikelihood' ; inputs = (unnormalizedPriorVector : meansAsRows : logStdDevAsRows : dataVectorSequence) /*plus the function args*/ ]
 InvStdDev(dataVectorSequence, tag='') = new ComputationNode [ operation = 'InvStdDev' ; inputs = dataVectorSequence /*plus the function args*/ ]
 KhatriRaoProduct(leftMatrix, rightMatrix, tag='') = new ComputationNode [ operation = 'KhatriRaoProduct' ; inputs = (leftMatrix : rightMatrix) /*plus the function args*/ ]
+LatticeFreeMMI(labelVectorSequence, outProbVectorSequence, logPrior, tmap, smap, acweight = 1.0, usePrior = true, tag='') = new ComputationNode [ operation = 'LatticeFreeMMI' ; inputs = (labelVectorSequence : outProbVectorSequence : logPrior: tmap : smap) /*plus the function args*/ ]
 Log(x, tag='') = new ComputationNode [ operation = 'Log' ; inputs = x /*plus the function args*/ ]
 LogPlus(leftMatrix, rightMatrix, tag='') = new ComputationNode [ operation = 'LogPlus' ; inputs = (leftMatrix : rightMatrix) /*plus the function args*/ ]
 LogSoftmax(z, tag='') = new ComputationNode [ operation = 'LogSoftmax' ; inputs = z /*plus the function args*/ ]

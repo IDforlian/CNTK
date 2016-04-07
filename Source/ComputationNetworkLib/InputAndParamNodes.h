@@ -30,13 +30,13 @@ class LearnableParameter : public ComputationNode<ElemType>, public NumInputs<0>
 
 public:
     LearnableParameter(DEVICEID_TYPE deviceId, const wstring& name)
-        : Base(deviceId, name)
+        : Base(deviceId, name), m_isSparse(false)
     {
         SetLearningRateMultiplier(1.0f); // enable normal learning by default
         MarkValueNonSharable();
     }
     LearnableParameter(DEVICEID_TYPE deviceId, const wstring& name, const TensorShape& shape)
-        : Base(deviceId, name)
+        : Base(deviceId, name), m_isSparse(false)
     {
         SetLearningRateMultiplier(1.0f);
         MarkValueNonSharable();
@@ -46,6 +46,13 @@ public:
         : LearnableParameter(deviceId, name, TensorShape(rows, cols))
     {
     }
+    LearnableParameter(DEVICEID_TYPE deviceId, const wstring& name, const TensorShape& shape, const bool isSparse, const bool isSparse_dummy)
+        : Base(deviceId, name), m_isSparse(isSparse)
+    {
+        SetLearningRateMultiplier(1.0f);
+        MarkValueNonSharable();
+        InitShape(shape);
+    }
     LearnableParameter(const ScriptableObjects::IConfigRecordPtr configp);
 
     // initialize with random numbers
@@ -54,6 +61,12 @@ public:
 
     // initialize by reading a matrix from a text file
     void InitFromFile(const std::wstring& initFromFilePath);
+
+    // initialize by reading a matrix from a FST file
+    void InitFromFst(const wstring& fstFilePath, const wstring& smapFilePath, ElemType selfTransitionProbability, ElemType forwardTransitionProbability);
+
+    // initialize by reading a matrix from a Smap file
+    void InitFromSmap(const wstring& fstFilePath, const wstring& smapFilePath, ElemType selfTransitionProbability, ElemType forwardTransitionProbability);
 
     // helper to initialize from a matrix read from a text file or a string literal
     void InitFromArray(const std::vector<ElemType>& array, size_t numRows, size_t numCols);
@@ -106,6 +119,83 @@ public:
     void InferInputDimsFrom(const TensorShape& otherShape);
 
     virtual void DumpNodeInfo(const bool printValues, const bool printMetadata, File& fstream) const override;
+
+private:
+    bool m_isSparse;
+
+    struct arc {
+        int source;
+        int destination;    // destination state
+        int label;            // 0..N for acoustic leaf labels
+        int statenum;  // the id of the arc
+        ElemType lm_cost;  // from the graph
+        ElemType logsp, logfp; // log of self and forward loop probabilities
+    };
+
+    struct DataArc{
+        int From;
+        int To;
+        int Senone;
+        ElemType Cost;
+    };
+
+private:
+    void Graph2matrix(const vector<DataArc> input, int maxstate, ElemType selfTransitionProbability, ElemType forwardTransitionProbability, ElemType *&_A, int *&_IA, int *&_JA, int &N, int &nz, ElemType *&smap_A, int *&smap_IA, int *& smap_JA, int &smap_nz, int numSenone, const wchar_t *transfile);
+    
+    void Read_senone_map(const wchar_t *infile, map<string, int> &idx4senone) {
+        FILE *fin = fopenOrDie(infile, L"r");
+
+        const int slen = 1000;
+        char buff[slen];
+        int snum = 0;
+        while (fscanf(fin, "%s", buff) == 1) {
+            char *p = strchr(buff, '.');
+            if (p)
+                *p = '_';  // convert Jasha's "." to an "_" for consistency with the graph
+            string sn(buff);
+            sn = "[" + sn + "]";
+            assert(!idx4senone.count(sn)); // each should only be listed once
+            idx4senone[sn] = snum++;
+        }
+        fclose(fin);
+    }
+
+    vector<DataArc> LoadTfstFile(const wchar_t *infile, map<string, int> &idx4senone, int &maxstate)
+    {
+        FILE *fin = fopenOrDie(infile, L"r");
+        vector<DataArc> input;
+        const int llen = 1000;
+        char line[llen];
+        maxstate = 0;
+        while (fgets(line, llen, fin))
+        {
+            if (line[0] == '#')
+                continue;
+            char f1[100], f2[100], f3[100], f4[100];
+            DataArc arc;
+            int num_cols = sscanf(line, "%s %s %s %s", f1, f2, f3, f4);
+            arc.From = stoi(f1);
+            if (num_cols <= 2)
+            {
+                arc.Senone = -1;
+                arc.Cost = pow(10.0f, (num_cols == 1) ? (0.0f) : ((ElemType)-stof(f2)));
+            }
+            else
+            {
+                assert(f3[0] == '[');  // in this program, reading a specialized graph with no epsilons
+                arc.To = stoi(f2);
+                arc.Cost = pow(10.0f, (num_cols == 3) ? (0.0f) : ((ElemType)-stof(f4)));
+                assert(idx4senone.count(f3));  // should be on the statelist or there is a AM/graph mismatch
+                arc.Senone = idx4senone[f3];
+            }
+            input.push_back(arc);
+            if (arc.From > maxstate) maxstate = arc.From;
+        }
+
+        fclose(fin);
+        return input;
+    }
+
 };
 
 // -----------------------------------------------------------------------

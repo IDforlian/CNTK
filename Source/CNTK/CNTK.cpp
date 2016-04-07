@@ -698,6 +698,8 @@ int wmain1(int argc, wchar_t* argv[]) // called from wmain which is a wrapper th
         for (int i = 0; i < argc && !isOldCNTKConfig; i++)
             isOldCNTKConfig |= !_wcsnicmp(L"configFile=", argv[i], 11);
 
+        //system("del D:\\temp\\testdata\\output\\*.* /Q &");
+
         if (isOldCNTKConfig)
             return wmainOldCNTKConfig(argc, argv);
 

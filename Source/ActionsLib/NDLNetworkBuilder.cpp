@@ -16,6 +16,7 @@
 #include "ReshapingNodes.h"
 #include "InputAndParamNodes.h"
 #include "TensorShape.h"
+#include "SpecialPurposeNodes.h"
 
 namespace Microsoft { namespace MSR { namespace CNTK {
 
@@ -165,6 +166,54 @@ void NDLNodeEvaluatorImpl<ElemType>::Evaluate(NDLNode<ElemType>* node, const wst
                 if (!fexists(initFromFilePath))
                     RuntimeError("File pointed to by initFromFilePath does not exist: %s", initFromFilePath.c_str());
                 dynamic_pointer_cast<LearnableParameter<ElemType>>(nodePtr)->InitFromFile(msra::strfun::utf16(initFromFilePath));
+            }
+            else if (EqualCI(initString, L"fromFst"))
+            {
+                std::string fstFilePath = node->GetOptionalParameter("fstFilePath", "");
+                if (fstFilePath == "")
+                    RuntimeError("fstFilePath must be set when using \"fromFst\" initialization method");
+                if (fstFilePath[0] == '\"' && fstFilePath[fstFilePath.size() - 1] == '\"')
+                    // remove the opening and closing double quotes
+                    fstFilePath = fstFilePath.substr(1, fstFilePath.size() - 2);
+                if (!fexists(fstFilePath))
+                    RuntimeError("File pointed to by fstFilePath does not exist: %s", fstFilePath.c_str());
+
+                std::string smapFilePath = node->GetOptionalParameter("smapFilePath", "");
+                if (smapFilePath == "")
+                    RuntimeError("smapFilePath must be set when using \"fromFst\" initialization method");
+                if (smapFilePath[0] == '\"' && smapFilePath[smapFilePath.size() - 1] == '\"')
+                    // remove the opening and closing double quotes
+                    smapFilePath = smapFilePath.substr(1, smapFilePath.size() - 2);
+                if (!fexists(smapFilePath))
+                    RuntimeError("File pointed to by smapFilePath does not exist: %s", smapFilePath.c_str());
+
+                ElemType selfTransitionProbability = (ElemType)atof(node->GetOptionalParameter("selfTransitionProbability", ""));
+                ElemType forwardTransitionProbability = (ElemType)atof(node->GetOptionalParameter("forwardTransitionProbability", ""));
+                dynamic_pointer_cast<LearnableParameter<ElemType>>(nodePtr)->InitFromFst(msra::strfun::utf16(fstFilePath), msra::strfun::utf16(smapFilePath), selfTransitionProbability, forwardTransitionProbability);
+            }
+            else if (EqualCI(initString, L"fromSmap"))
+            {
+                std::string fstFilePath = node->GetOptionalParameter("fstFilePath", "");
+                if (fstFilePath == "")
+                    RuntimeError("fstFilePath must be set when using \"fromSmap\" initialization method");
+                if (fstFilePath[0] == '\"' && fstFilePath[fstFilePath.size() - 1] == '\"')
+                    // remove the opening and closing double quotes
+                    fstFilePath = fstFilePath.substr(1, fstFilePath.size() - 2);
+                if (!fexists(fstFilePath))
+                    RuntimeError("File pointed to by fstFilePath does not exist: %s", fstFilePath.c_str());
+
+                std::string smapFilePath = node->GetOptionalParameter("smapFilePath", "");
+                if (smapFilePath == "")
+                    RuntimeError("smapFilePath must be set when using \"fromFst\" initialization method");
+                if (smapFilePath[0] == '\"' && smapFilePath[smapFilePath.size() - 1] == '\"')
+                    // remove the opening and closing double quotes
+                    smapFilePath = smapFilePath.substr(1, smapFilePath.size() - 2);
+                if (!fexists(smapFilePath))
+                    RuntimeError("File pointed to by smapFilePath does not exist: %s", smapFilePath.c_str());
+
+                ElemType selfTransitionProbability = (ElemType)atof(node->GetOptionalParameter("selfTransitionProbability", ""));
+                ElemType forwardTransitionProbability = (ElemType)atof(node->GetOptionalParameter("forwardTransitionProbability", ""));
+                dynamic_pointer_cast<LearnableParameter<ElemType>>(nodePtr)->InitFromSmap(msra::strfun::utf16(fstFilePath), msra::strfun::utf16(smapFilePath), selfTransitionProbability, forwardTransitionProbability);
             }
             else
                 RuntimeError("'init' must be one of the values of [ uniform | gaussian | fixedValue ]");
@@ -510,6 +559,27 @@ void NDLNodeEvaluatorImpl<ElemType>::Evaluate(NDLNode<ElemType>* node, const wst
             ImageLayoutKind imageLayoutKind = ImageLayoutKindFrom(node->GetOptionalParameter("imageLayout", "CHW"));
 
             nodePtr = builder.BatchNormalization(nullptr, nullptr, nullptr, nullptr, nullptr, spatial, normTimeConst, blendTimeConst, epsilon, useCntkEngine, imageLayoutKind, name);
+        }
+    }
+    else if (cnNodeType == OperationNameOf(LatticeFreeMMINode))
+    {
+        if (parameter.size() != 5)
+            RuntimeError("%ls should have 5 fixed parameters[labelVectorSequence, outProbVectorSequence, logPrior, tmap, smap].", cnNodeType.c_str());
+
+        // setup the parameter position of children so we can hook them up later
+        nodeParamCount = 5;
+        nodeParamStart = 0;
+
+        if (pass == ndlPassInitial)
+        {
+            int id = 5; // skip inputValueNode, scale and bias, runMean, runInvStdDev.
+            // evaluate only scalar parameters
+            vector<void*> params = EvaluateParameters(node, baseName, id, parameter.size() - id, pass);
+
+            // Optional parameters
+            ElemType acweight = node->GetOptionalParameter("acweight", "1.0");
+            bool usePrior = node->GetOptionalParameter("usePrior", "true");
+            nodePtr = builder.LatticeFreeMMI(nullptr, nullptr, nullptr, nullptr, nullptr,  acweight, usePrior, name);
         }
     }
     else

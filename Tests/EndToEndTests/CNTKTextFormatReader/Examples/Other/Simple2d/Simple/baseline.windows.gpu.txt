@@ -1,0 +1,787 @@
+=== Running /cygdrive/c/src/cntk_github/x64/release/cntk.exe configFile=C:\src\cntk_github\Tests\EndToEndTests\CNTKTextFormatReader\Examples\Other\Simple2d\Config/Simple.cntk currentDirectory=C:\src\cntk_github\Examples\Other\Simple2d\Data RunDir=E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu DataDir=C:\src\cntk_github\Examples\Other\Simple2d\Data ConfigDir=C:\src\cntk_github\Tests\EndToEndTests\CNTKTextFormatReader\Examples\Other\Simple2d\Config OutputDir=E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu DeviceId=0 timestamping=true Simple_Demo_Train=[SGD=[maxEpochs=3]]
+-------------------------------------------------------------------
+Build info: 
+
+		Built time: Apr 26 2016 14:22:06
+		Last modified date: Thu Apr  7 11:05:47 2016
+		Build type: Release
+		Build target: GPU
+		With 1bit-SGD: no
+		CUDA_PATH: C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0
+		CUB_PATH: E:\lib\cub-1.4.1
+		CUDNN_PATH: E:\lib\cuDNN_v4
+		Build Branch: alrezni/examples_text
+		Build SHA1: bacd6681dae457fcc823f84c2e635d69134b1219
+		Built by alrezni on DIFFENG
+		Build Path: c:\src\cntk_github\Source\CNTK\
+-------------------------------------------------------------------
+Changed current directory to C:\src\cntk_github\Examples\Other\Simple2d\Data
+04/26/2016 15:43:57: -------------------------------------------------------------------
+04/26/2016 15:43:57: Build info: 
+
+04/26/2016 15:43:57: 		Built time: Apr 26 2016 14:22:06
+04/26/2016 15:43:57: 		Last modified date: Thu Apr  7 11:05:47 2016
+04/26/2016 15:43:57: 		Build type: Release
+04/26/2016 15:43:57: 		Build target: GPU
+04/26/2016 15:43:57: 		With 1bit-SGD: no
+04/26/2016 15:43:57: 		CUDA_PATH: C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0
+04/26/2016 15:43:57: 		CUB_PATH: E:\lib\cub-1.4.1
+04/26/2016 15:43:57: 		CUDNN_PATH: E:\lib\cuDNN_v4
+04/26/2016 15:43:57: 		Build Branch: alrezni/examples_text
+04/26/2016 15:43:57: 		Build SHA1: bacd6681dae457fcc823f84c2e635d69134b1219
+04/26/2016 15:43:57: 		Built by alrezni on DIFFENG
+04/26/2016 15:43:57: 		Build Path: c:\src\cntk_github\Source\CNTK\
+04/26/2016 15:43:57: -------------------------------------------------------------------
+
+04/26/2016 15:43:57: Running on DIFFENG at 2016/04/26 15:43:57
+04/26/2016 15:43:57: Command line: 
+C:\src\cntk_github\x64\release\cntk.exe  configFile=C:\src\cntk_github\Tests\EndToEndTests\CNTKTextFormatReader\Examples\Other\Simple2d\Config/Simple.cntk  currentDirectory=C:\src\cntk_github\Examples\Other\Simple2d\Data  RunDir=E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu  DataDir=C:\src\cntk_github\Examples\Other\Simple2d\Data  ConfigDir=C:\src\cntk_github\Tests\EndToEndTests\CNTKTextFormatReader\Examples\Other\Simple2d\Config  OutputDir=E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu  DeviceId=0  timestamping=true  Simple_Demo_Train=[SGD=[maxEpochs=3]]
+
+
+
+04/26/2016 15:43:57: >>>>>>>>>>>>>>>>>>>> RAW CONFIG (VARIABLES NOT RESOLVED) >>>>>>>>>>>>>>>>>>>>
+04/26/2016 15:43:57: RootDir = ".."
+ConfigDir = "$RootDir$/Config"
+DataDir   = "$RootDir$/Data"
+OutputDir = "$RootDir$/Output"
+ModelDir  = "$OutputDir$/Models"
+deviceId = -1
+command = Simple_Demo_Train:Simple_Demo_Test:Simple_Demo_Output
+precision = "float"
+traceLevel = 1
+modelPath = "$ModelDir$/simple.dnn"
+outputNodeNames = ScaledLogLikelihood
+Simple_Demo_Train = [
+    action = "train"
+    SimpleNetworkBuilder = [
+        layerSizes = 2:50*2:2
+        trainingCriterion = "CrossEntropyWithSoftmax"
+        evalCriterion = "ErrorPrediction"
+        layerTypes = "Sigmoid"
+        initValueScale = 1.0
+        applyMeanVarNorm = true
+        uniformInit = true
+        needPrior = true
+    ]
+    SGD = [
+        epochSize = 0 
+        minibatchSize = 25  
+        learningRatesPerMB = 0.5:0.2*20:0.1
+        momentumPerMB = 0.9
+        dropoutRate = 0.0
+        maxEpochs = 10
+    ]
+    reader = [
+        readerType = "CNTKTextFormatReader"
+        file = "$DataDir$/SimpleDataTrain_cntk_text.txt"
+        input = [
+            features = [
+dim = 2        
+                format = "dense"
+            ]
+            labels = [
+dim = 2        
+                format = "dense"
+            ]
+        ]
+    ]
+]
+Simple_Demo_Test = [
+    action = "test"
+    reader = [
+        readerType = "CNTKTextFormatReader"
+        file = "$DataDir$/SimpleDataTest_cntk_text.txt"
+        input = [
+            features = [
+dim = 2        
+                format = "dense"
+            ]
+            labels = [
+dim = 2        
+                format = "dense"
+            ]
+        ]
+    ]
+]
+Simple_Demo_Output=[
+    action = "write"
+    reader = [
+        readerType = "CNTKTextFormatReader"
+        file = "$DataDir$/SimpleDataTest_cntk_text.txt"
+        input = [
+            features = [
+dim = 2        
+                format = "dense"
+            ]
+            labels = [
+dim = 2        
+                format = "dense"
+            ]
+        ]
+    ]
+outputNodeNames = PosteriorProb : labels    
+outputPath = "$OutputDir$/SimpleOutput"     
+    format = [
+type = "category"                                
+labelMappingFile = "$DataDir$/SimpleMapping.txt" 
+sequenceEpilogue = "\t// %s\n"                   
+    ]
+]
+currentDirectory=C:\src\cntk_github\Examples\Other\Simple2d\Data
+RunDir=E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu
+DataDir=C:\src\cntk_github\Examples\Other\Simple2d\Data
+ConfigDir=C:\src\cntk_github\Tests\EndToEndTests\CNTKTextFormatReader\Examples\Other\Simple2d\Config
+OutputDir=E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu
+DeviceId=0
+timestamping=true
+Simple_Demo_Train=[SGD=[maxEpochs=3]]
+
+04/26/2016 15:43:57: <<<<<<<<<<<<<<<<<<<< RAW CONFIG (VARIABLES NOT RESOLVED)  <<<<<<<<<<<<<<<<<<<<
+
+04/26/2016 15:43:57: >>>>>>>>>>>>>>>>>>>> RAW CONFIG WITH ALL VARIABLES RESOLVED >>>>>>>>>>>>>>>>>>>>
+04/26/2016 15:43:57: RootDir = ".."
+ConfigDir = "../Config"
+DataDir   = "../Data"
+OutputDir = "../Output"
+ModelDir  = "E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu/Models"
+deviceId = -1
+command = Simple_Demo_Train:Simple_Demo_Test:Simple_Demo_Output
+precision = "float"
+traceLevel = 1
+modelPath = "E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu/Models/simple.dnn"
+outputNodeNames = ScaledLogLikelihood
+Simple_Demo_Train = [
+    action = "train"
+    SimpleNetworkBuilder = [
+        layerSizes = 2:50*2:2
+        trainingCriterion = "CrossEntropyWithSoftmax"
+        evalCriterion = "ErrorPrediction"
+        layerTypes = "Sigmoid"
+        initValueScale = 1.0
+        applyMeanVarNorm = true
+        uniformInit = true
+        needPrior = true
+    ]
+    SGD = [
+        epochSize = 0 
+        minibatchSize = 25  
+        learningRatesPerMB = 0.5:0.2*20:0.1
+        momentumPerMB = 0.9
+        dropoutRate = 0.0
+        maxEpochs = 10
+    ]
+    reader = [
+        readerType = "CNTKTextFormatReader"
+        file = "C:\src\cntk_github\Examples\Other\Simple2d\Data/SimpleDataTrain_cntk_text.txt"
+        input = [
+            features = [
+dim = 2        
+                format = "dense"
+            ]
+            labels = [
+dim = 2        
+                format = "dense"
+            ]
+        ]
+    ]
+]
+Simple_Demo_Test = [
+    action = "test"
+    reader = [
+        readerType = "CNTKTextFormatReader"
+        file = "C:\src\cntk_github\Examples\Other\Simple2d\Data/SimpleDataTest_cntk_text.txt"
+        input = [
+            features = [
+dim = 2        
+                format = "dense"
+            ]
+            labels = [
+dim = 2        
+                format = "dense"
+            ]
+        ]
+    ]
+]
+Simple_Demo_Output=[
+    action = "write"
+    reader = [
+        readerType = "CNTKTextFormatReader"
+        file = "C:\src\cntk_github\Examples\Other\Simple2d\Data/SimpleDataTest_cntk_text.txt"
+        input = [
+            features = [
+dim = 2        
+                format = "dense"
+            ]
+            labels = [
+dim = 2        
+                format = "dense"
+            ]
+        ]
+    ]
+outputNodeNames = PosteriorProb : labels    
+outputPath = "E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu/SimpleOutput"     
+    format = [
+type = "category"                                
+labelMappingFile = "C:\src\cntk_github\Examples\Other\Simple2d\Data/SimpleMapping.txt" 
+sequenceEpilogue = "\t// %s\n"                   
+    ]
+]
+currentDirectory=C:\src\cntk_github\Examples\Other\Simple2d\Data
+RunDir=E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu
+DataDir=C:\src\cntk_github\Examples\Other\Simple2d\Data
+ConfigDir=C:\src\cntk_github\Tests\EndToEndTests\CNTKTextFormatReader\Examples\Other\Simple2d\Config
+OutputDir=E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu
+DeviceId=0
+timestamping=true
+Simple_Demo_Train=[SGD=[maxEpochs=3]]
+
+04/26/2016 15:43:57: <<<<<<<<<<<<<<<<<<<< RAW CONFIG WITH ALL VARIABLES RESOLVED <<<<<<<<<<<<<<<<<<<<
+
+04/26/2016 15:43:57: >>>>>>>>>>>>>>>>>>>> PROCESSED CONFIG WITH ALL VARIABLES RESOLVED >>>>>>>>>>>>>>>>>>>>
+configparameters: Simple.cntk:command=Simple_Demo_Train:Simple_Demo_Test:Simple_Demo_Output
+configparameters: Simple.cntk:ConfigDir=C:\src\cntk_github\Tests\EndToEndTests\CNTKTextFormatReader\Examples\Other\Simple2d\Config
+configparameters: Simple.cntk:currentDirectory=C:\src\cntk_github\Examples\Other\Simple2d\Data
+configparameters: Simple.cntk:DataDir=C:\src\cntk_github\Examples\Other\Simple2d\Data
+configparameters: Simple.cntk:deviceId=0
+configparameters: Simple.cntk:ModelDir=E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu/Models
+configparameters: Simple.cntk:modelPath=E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu/Models/simple.dnn
+configparameters: Simple.cntk:OutputDir=E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu
+configparameters: Simple.cntk:outputNodeNames=ScaledLogLikelihood
+configparameters: Simple.cntk:precision=float
+configparameters: Simple.cntk:RootDir=..
+configparameters: Simple.cntk:RunDir=E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu
+configparameters: Simple.cntk:Simple_Demo_Output=[
+    action = "write"
+    reader = [
+        readerType = "CNTKTextFormatReader"
+        file = "C:\src\cntk_github\Examples\Other\Simple2d\Data/SimpleDataTest_cntk_text.txt"
+        input = [
+            features = [
+dim = 2        
+                format = "dense"
+            ]
+            labels = [
+dim = 2        
+                format = "dense"
+            ]
+        ]
+    ]
+outputNodeNames = PosteriorProb : labels    
+outputPath = "E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu/SimpleOutput"     
+    format = [
+type = "category"                                
+labelMappingFile = "C:\src\cntk_github\Examples\Other\Simple2d\Data/SimpleMapping.txt" 
+sequenceEpilogue = "\t// %s\n"                   
+    ]
+]
+
+configparameters: Simple.cntk:Simple_Demo_Test=[
+    action = "test"
+    reader = [
+        readerType = "CNTKTextFormatReader"
+        file = "C:\src\cntk_github\Examples\Other\Simple2d\Data/SimpleDataTest_cntk_text.txt"
+        input = [
+            features = [
+dim = 2        
+                format = "dense"
+            ]
+            labels = [
+dim = 2        
+                format = "dense"
+            ]
+        ]
+    ]
+]
+
+configparameters: Simple.cntk:Simple_Demo_Train=[
+    action = "train"
+    SimpleNetworkBuilder = [
+        layerSizes = 2:50*2:2
+        trainingCriterion = "CrossEntropyWithSoftmax"
+        evalCriterion = "ErrorPrediction"
+        layerTypes = "Sigmoid"
+        initValueScale = 1.0
+        applyMeanVarNorm = true
+        uniformInit = true
+        needPrior = true
+    ]
+    SGD = [
+        epochSize = 0 
+        minibatchSize = 25  
+        learningRatesPerMB = 0.5:0.2*20:0.1
+        momentumPerMB = 0.9
+        dropoutRate = 0.0
+        maxEpochs = 10
+    ]
+    reader = [
+        readerType = "CNTKTextFormatReader"
+        file = "C:\src\cntk_github\Examples\Other\Simple2d\Data/SimpleDataTrain_cntk_text.txt"
+        input = [
+            features = [
+dim = 2        
+                format = "dense"
+            ]
+            labels = [
+dim = 2        
+                format = "dense"
+            ]
+        ]
+    ]
+] [SGD=[maxEpochs=3]]
+
+configparameters: Simple.cntk:timestamping=true
+configparameters: Simple.cntk:traceLevel=1
+04/26/2016 15:43:57: <<<<<<<<<<<<<<<<<<<< PROCESSED CONFIG WITH ALL VARIABLES RESOLVED <<<<<<<<<<<<<<<<<<<<
+04/26/2016 15:43:57: Commands: Simple_Demo_Train Simple_Demo_Test Simple_Demo_Output
+04/26/2016 15:43:57: Precision = "float"
+04/26/2016 15:43:57: CNTKModelPath: E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu/Models/simple.dnn
+04/26/2016 15:43:57: CNTKCommandTrainInfo: Simple_Demo_Train : 3
+04/26/2016 15:43:57: CNTKCommandTrainInfo: CNTKNoMoreCommands_Total : 3
+
+04/26/2016 15:43:57: ##############################################################################
+04/26/2016 15:43:57: #                                                                            #
+04/26/2016 15:43:57: # Action "train"                                                             #
+04/26/2016 15:43:57: #                                                                            #
+04/26/2016 15:43:57: ##############################################################################
+
+04/26/2016 15:43:57: CNTKCommandTrainBegin: Simple_Demo_Train
+SimpleNetworkBuilder Using GPU 0
+
+04/26/2016 15:43:57: Creating virgin network.
+Microsoft::MSR::CNTK::GPUMatrix<ElemType>::SetUniformRandomValue (GPU): creating curand object with seed 1, sizeof(ElemType)==4
+
+Post-processing network...
+
+7 roots:
+	CrossEntropyWithSoftmax = CrossEntropyWithSoftmax()
+	EvalErrorPrediction = ErrorPrediction()
+	InvStdOfFeatures = InvStdDev()
+	MeanOfFeatures = Mean()
+	PosteriorProb = Softmax()
+	Prior = Mean()
+	ScaledLogLikelihood = Minus()
+
+Validating network. 25 nodes to process in pass 1.
+
+Validating --> labels = InputValue() :  -> [2 x *]
+Validating --> W2 = LearnableParameter() :  -> [2 x 50]
+Validating --> W1 = LearnableParameter() :  -> [50 x 50]
+Validating --> W0 = LearnableParameter() :  -> [50 x 2]
+Validating --> features = InputValue() :  -> [2 x *]
+Validating --> MeanOfFeatures = Mean (features) : [2 x *] -> [2]
+Validating --> InvStdOfFeatures = InvStdDev (features) : [2 x *] -> [2]
+Validating --> MVNormalizedFeatures = PerDimMeanVarNormalization (features, MeanOfFeatures, InvStdOfFeatures) : [2 x *], [2], [2] -> [2 x *]
+Validating --> W0*features = Times (W0, MVNormalizedFeatures) : [50 x 2], [2 x *] -> [50 x *]
+Validating --> B0 = LearnableParameter() :  -> [50 x 1]
+Validating --> W0*features+B0 = Plus (W0*features, B0) : [50 x *], [50 x 1] -> [50 x 1 x *]
+Validating --> H1 = Sigmoid (W0*features+B0) : [50 x 1 x *] -> [50 x 1 x *]
+Validating --> W1*H1 = Times (W1, H1) : [50 x 50], [50 x 1 x *] -> [50 x 1 x *]
+Validating --> B1 = LearnableParameter() :  -> [50 x 1]
+Validating --> W1*H1+B1 = Plus (W1*H1, B1) : [50 x 1 x *], [50 x 1] -> [50 x 1 x *]
+Validating --> H2 = Sigmoid (W1*H1+B1) : [50 x 1 x *] -> [50 x 1 x *]
+Validating --> W2*H1 = Times (W2, H2) : [2 x 50], [50 x 1 x *] -> [2 x 1 x *]
+Validating --> B2 = LearnableParameter() :  -> [2 x 1]
+Validating --> HLast = Plus (W2*H1, B2) : [2 x 1 x *], [2 x 1] -> [2 x 1 x *]
+Validating --> CrossEntropyWithSoftmax = CrossEntropyWithSoftmax (labels, HLast) : [2 x *], [2 x 1 x *] -> [1]
+Validating --> EvalErrorPrediction = ErrorPrediction (labels, HLast) : [2 x *], [2 x 1 x *] -> [1]
+Validating --> PosteriorProb = Softmax (HLast) : [2 x 1 x *] -> [2 x 1 x *]
+Validating --> Prior = Mean (labels) : [2 x *] -> [2]
+Validating --> LogOfPrior = Log (Prior) : [2] -> [2]
+Validating --> ScaledLogLikelihood = Minus (HLast, LogOfPrior) : [2 x 1 x *], [2] -> [2 x 1 x *]
+
+Validating network. 17 nodes to process in pass 2.
+
+
+Validating network, final pass.
+
+
+
+12 out of 25 nodes do not share the minibatch layout with the input data.
+
+Post-processing network complete.
+
+04/26/2016 15:43:57: Created model with 25 nodes on GPU 0.
+
+04/26/2016 15:43:57: Training criterion node(s):
+04/26/2016 15:43:57: 	CrossEntropyWithSoftmax = CrossEntropyWithSoftmax
+
+04/26/2016 15:43:57: Evaluation criterion node(s):
+
+04/26/2016 15:43:57: 	EvalErrorPrediction = ErrorPrediction
+
+
+Allocating matrices for forward and/or backward propagation.
+
+Memory Sharing Structure:
+
+0000000000000000: {[EvalErrorPrediction Gradient[1]] [InvStdOfFeatures Gradient[2]] [LogOfPrior Gradient[2]] [MVNormalizedFeatures Gradient[2 x *]] [MeanOfFeatures Gradient[2]] [PosteriorProb Gradient[2 x 1 x *]] [PosteriorProb Value[2 x 1 x *]] [Prior Gradient[2]] [ScaledLogLikelihood Gradient[2 x 1 x *]] [features Gradient[2 x *]] [labels Gradient[2 x *]] }
+0000000334AC0E90: {[features Value[2 x *]] }
+000000034AD06930: {[labels Value[2 x *]] }
+000000034AD06A70: {[W0 Value[50 x 2]] }
+000000034AD06E30: {[W1 Value[50 x 50]] }
+000000034AD070B0: {[B2 Value[2 x 1]] }
+000000034AD07330: {[W2 Value[2 x 50]] }
+000000034AD073D0: {[B0 Value[50 x 1]] }
+000000034AD075B0: {[Prior Value[2]] }
+000000034AD07A10: {[B1 Value[50 x 1]] }
+000000034AD7C740: {[InvStdOfFeatures Value[2]] }
+000000034AD7D000: {[MeanOfFeatures Value[2]] }
+000000034CCD5450: {[W0*features+B0 Gradient[50 x 1 x *]] [W1*H1 Value[50 x 1 x *]] }
+000000034CCD54F0: {[B0 Gradient[50 x 1]] [H1 Gradient[50 x 1 x *]] [W1*H1+B1 Gradient[50 x 1 x *]] [W2*H1 Value[2 x 1 x *]] }
+000000034CCD5590: {[B1 Gradient[50 x 1]] [H2 Gradient[50 x 1 x *]] [HLast Gradient[2 x 1 x *]] }
+000000034CCD5630: {[W1 Gradient[50 x 50]] [W1*H1+B1 Value[50 x 1 x *]] }
+000000034CCD5770: {[W2*H1 Gradient[2 x 1 x *]] }
+000000034CCD59F0: {[EvalErrorPrediction Value[1]] }
+000000034CCD5BD0: {[H2 Value[50 x 1 x *]] [W1*H1 Gradient[50 x 1 x *]] }
+000000034CCD5EF0: {[MVNormalizedFeatures Value[2 x *]] }
+000000034CCD60D0: {[ScaledLogLikelihood Value[2 x 1 x *]] }
+000000034CCD63F0: {[B2 Gradient[2 x 1]] }
+000000034CCD6670: {[CrossEntropyWithSoftmax Value[1]] }
+000000034CCD6A30: {[W0*features Value[50 x *]] }
+000000034CCD6AD0: {[HLast Value[2 x 1 x *]] [W2 Gradient[2 x 50]] }
+000000034CCD7070: {[W0 Gradient[50 x 2]] [W0*features+B0 Value[50 x 1 x *]] }
+000000034CCD7110: {[LogOfPrior Value[2]] }
+000000034CCD71B0: {[CrossEntropyWithSoftmax Gradient[1]] }
+000000034CCD72F0: {[H1 Value[50 x 1 x *]] [W0*features Gradient[50 x *]] }
+
+
+04/26/2016 15:43:57: Precomputing --> 3 PreCompute nodes found.
+
+04/26/2016 15:43:57: 	MeanOfFeatures = Mean()
+04/26/2016 15:43:57: 	InvStdOfFeatures = InvStdDev()
+04/26/2016 15:43:57: 	Prior = Mean()
+
+04/26/2016 15:43:58: Precomputing --> Completed.
+
+
+04/26/2016 15:43:58: Starting Epoch 1: learning rate per sample = 0.020000  effective momentum = 0.900000  momentum as time constant = 237.3 samples
+
+04/26/2016 15:43:58: Starting minibatch loop.
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[   1-  10]: SamplesSeen = 250; TrainLossPerSample =  0.70650452; EvalErr[0]PerSample = 0.55200000; TotalTime = 0.0137s; SamplesPerSecond = 18216.3
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[  11-  20]: SamplesSeen = 250; TrainLossPerSample =  0.69701831; EvalErr[0]PerSample = 0.47600000; TotalTime = 0.0114s; SamplesPerSecond = 21978.0
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[  21-  30]: SamplesSeen = 250; TrainLossPerSample =  0.71089587; EvalErr[0]PerSample = 0.50400000; TotalTime = 0.0121s; SamplesPerSecond = 20703.9
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[  31-  40]: SamplesSeen = 250; TrainLossPerSample =  0.72980273; EvalErr[0]PerSample = 0.56000000; TotalTime = 0.0139s; SamplesPerSecond = 18032.3
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[  41-  50]: SamplesSeen = 250; TrainLossPerSample =  0.70902783; EvalErr[0]PerSample = 0.52800000; TotalTime = 0.0147s; SamplesPerSecond = 17053.2
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[  51-  60]: SamplesSeen = 250; TrainLossPerSample =  0.72657300; EvalErr[0]PerSample = 0.54400000; TotalTime = 0.0158s; SamplesPerSecond = 15789.8
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[  61-  70]: SamplesSeen = 250; TrainLossPerSample =  0.69319678; EvalErr[0]PerSample = 0.43200000; TotalTime = 0.0139s; SamplesPerSecond = 18020.6
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[  71-  80]: SamplesSeen = 250; TrainLossPerSample =  0.73563477; EvalErr[0]PerSample = 0.50000000; TotalTime = 0.0141s; SamplesPerSecond = 17775.9
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[  81-  90]: SamplesSeen = 250; TrainLossPerSample =  0.71463281; EvalErr[0]PerSample = 0.51200000; TotalTime = 0.0134s; SamplesPerSecond = 18605.3
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[  91- 100]: SamplesSeen = 250; TrainLossPerSample =  0.75213428; EvalErr[0]PerSample = 0.47200000; TotalTime = 0.0155s; SamplesPerSecond = 16113.4
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 101- 110]: SamplesSeen = 250; TrainLossPerSample =  0.75931445; EvalErr[0]PerSample = 0.53200000; TotalTime = 0.0143s; SamplesPerSecond = 17453.2
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 111- 120]: SamplesSeen = 250; TrainLossPerSample =  0.73075293; EvalErr[0]PerSample = 0.50800000; TotalTime = 0.0137s; SamplesPerSecond = 18224.2
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 121- 130]: SamplesSeen = 250; TrainLossPerSample =  0.76701953; EvalErr[0]PerSample = 0.53200000; TotalTime = 0.0159s; SamplesPerSecond = 15749.0
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 131- 140]: SamplesSeen = 250; TrainLossPerSample =  0.70451270; EvalErr[0]PerSample = 0.46800000; TotalTime = 0.0148s; SamplesPerSecond = 16921.6
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 141- 150]: SamplesSeen = 250; TrainLossPerSample =  0.70539941; EvalErr[0]PerSample = 0.50400000; TotalTime = 0.0120s; SamplesPerSecond = 20784.8
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 151- 160]: SamplesSeen = 250; TrainLossPerSample =  0.72700293; EvalErr[0]PerSample = 0.50000000; TotalTime = 0.0134s; SamplesPerSecond = 18669.3
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 161- 170]: SamplesSeen = 250; TrainLossPerSample =  0.70096191; EvalErr[0]PerSample = 0.45600000; TotalTime = 0.0156s; SamplesPerSecond = 15985.7
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 171- 180]: SamplesSeen = 250; TrainLossPerSample =  0.69437305; EvalErr[0]PerSample = 0.49600000; TotalTime = 0.0156s; SamplesPerSecond = 16066.8
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 181- 190]: SamplesSeen = 250; TrainLossPerSample =  0.69161621; EvalErr[0]PerSample = 0.46800000; TotalTime = 0.0130s; SamplesPerSecond = 19199.8
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 191- 200]: SamplesSeen = 250; TrainLossPerSample =  0.73388281; EvalErr[0]PerSample = 0.55200000; TotalTime = 0.0172s; SamplesPerSecond = 14561.1
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 201- 210]: SamplesSeen = 250; TrainLossPerSample =  0.72255664; EvalErr[0]PerSample = 0.46800000; TotalTime = 0.0142s; SamplesPerSecond = 17621.8
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 211- 220]: SamplesSeen = 250; TrainLossPerSample =  0.70414551; EvalErr[0]PerSample = 0.45600000; TotalTime = 0.0130s; SamplesPerSecond = 19229.3
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 221- 230]: SamplesSeen = 250; TrainLossPerSample =  0.69976758; EvalErr[0]PerSample = 0.46000000; TotalTime = 0.0120s; SamplesPerSecond = 20883.8
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 231- 240]: SamplesSeen = 250; TrainLossPerSample =  0.72419141; EvalErr[0]PerSample = 0.51600000; TotalTime = 0.0123s; SamplesPerSecond = 20262.6
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 241- 250]: SamplesSeen = 250; TrainLossPerSample =  0.69943945; EvalErr[0]PerSample = 0.51200000; TotalTime = 0.0114s; SamplesPerSecond = 21839.8
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 251- 260]: SamplesSeen = 250; TrainLossPerSample =  0.69206445; EvalErr[0]PerSample = 0.47600000; TotalTime = 0.0117s; SamplesPerSecond = 21287.5
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 261- 270]: SamplesSeen = 250; TrainLossPerSample =  0.68771680; EvalErr[0]PerSample = 0.45600000; TotalTime = 0.0119s; SamplesPerSecond = 21034.9
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 271- 280]: SamplesSeen = 250; TrainLossPerSample =  0.69878516; EvalErr[0]PerSample = 0.44000000; TotalTime = 0.0139s; SamplesPerSecond = 18003.7
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 281- 290]: SamplesSeen = 250; TrainLossPerSample =  0.71889844; EvalErr[0]PerSample = 0.45600000; TotalTime = 0.0128s; SamplesPerSecond = 19578.7
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 291- 300]: SamplesSeen = 250; TrainLossPerSample =  0.70086523; EvalErr[0]PerSample = 0.52400000; TotalTime = 0.0137s; SamplesPerSecond = 18260.2
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 301- 310]: SamplesSeen = 250; TrainLossPerSample =  0.70878320; EvalErr[0]PerSample = 0.53200000; TotalTime = 0.0107s; SamplesPerSecond = 23428.0
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 311- 320]: SamplesSeen = 250; TrainLossPerSample =  0.70674414; EvalErr[0]PerSample = 0.48000000; TotalTime = 0.0119s; SamplesPerSecond = 21070.4
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 321- 330]: SamplesSeen = 250; TrainLossPerSample =  0.69707422; EvalErr[0]PerSample = 0.50000000; TotalTime = 0.0140s; SamplesPerSecond = 17871.2
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 331- 340]: SamplesSeen = 250; TrainLossPerSample =  0.68588281; EvalErr[0]PerSample = 0.40800000; TotalTime = 0.0101s; SamplesPerSecond = 24676.7
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 341- 350]: SamplesSeen = 250; TrainLossPerSample =  0.67734766; EvalErr[0]PerSample = 0.45600000; TotalTime = 0.0129s; SamplesPerSecond = 19384.4
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 351- 360]: SamplesSeen = 250; TrainLossPerSample =  0.67958008; EvalErr[0]PerSample = 0.48000000; TotalTime = 0.0138s; SamplesPerSecond = 18129.1
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 361- 370]: SamplesSeen = 250; TrainLossPerSample =  0.66424805; EvalErr[0]PerSample = 0.46800000; TotalTime = 0.0138s; SamplesPerSecond = 18167.3
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 371- 380]: SamplesSeen = 250; TrainLossPerSample =  0.62412500; EvalErr[0]PerSample = 0.20400000; TotalTime = 0.0140s; SamplesPerSecond = 17866.1
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 381- 390]: SamplesSeen = 250; TrainLossPerSample =  0.58007422; EvalErr[0]PerSample = 0.16000000; TotalTime = 0.0152s; SamplesPerSecond = 16495.1
+04/26/2016 15:43:58:  Epoch[ 1 of 3]-Minibatch[ 391- 400]: SamplesSeen = 250; TrainLossPerSample =  0.52764648; EvalErr[0]PerSample = 0.19200000; TotalTime = 0.0119s; SamplesPerSecond = 21086.4
+04/26/2016 15:43:58: Finished Epoch[ 1 of 3]: [Training Set] TrainLossPerSample = 0.69975483; TotalSamplesSeen = 10000; EvalErrPerSample = 0.4685; AvgLearningRatePerSample = 0.02; EpochTime=0.543766
+04/26/2016 15:43:58: SGD: Saving checkpoint model 'E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu/Models/simple.dnn.1'
+
+04/26/2016 15:43:58: Starting Epoch 2: learning rate per sample = 0.008000  effective momentum = 0.900000  momentum as time constant = 237.3 samples
+
+04/26/2016 15:43:58: Starting minibatch loop.
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[   1-  10, 2.50%]: SamplesSeen = 250; TrainLossPerSample =  0.44832977; EvalErr[0]PerSample = 0.15200000; TotalTime = 0.0144s; SamplesPerSecond = 17304.6
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[  11-  20, 5.00%]: SamplesSeen = 250; TrainLossPerSample =  0.40085291; EvalErr[0]PerSample = 0.12400000; TotalTime = 0.0131s; SamplesPerSecond = 19050.5
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[  21-  30, 7.50%]: SamplesSeen = 250; TrainLossPerSample =  0.33487201; EvalErr[0]PerSample = 0.09600000; TotalTime = 0.0124s; SamplesPerSecond = 20205.3
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[  31-  40, 10.00%]: SamplesSeen = 250; TrainLossPerSample =  0.29081885; EvalErr[0]PerSample = 0.08400000; TotalTime = 0.0138s; SamplesPerSecond = 18051.8
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[  41-  50, 12.50%]: SamplesSeen = 250; TrainLossPerSample =  0.26279236; EvalErr[0]PerSample = 0.07200000; TotalTime = 0.0141s; SamplesPerSecond = 17736.8
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[  51-  60, 15.00%]: SamplesSeen = 250; TrainLossPerSample =  0.25220630; EvalErr[0]PerSample = 0.09600000; TotalTime = 0.0124s; SamplesPerSecond = 20132.1
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[  61-  70, 17.50%]: SamplesSeen = 250; TrainLossPerSample =  0.20988293; EvalErr[0]PerSample = 0.08400000; TotalTime = 0.0149s; SamplesPerSecond = 16813.5
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[  71-  80, 20.00%]: SamplesSeen = 250; TrainLossPerSample =  0.21577441; EvalErr[0]PerSample = 0.07200000; TotalTime = 0.0119s; SamplesPerSecond = 20957.3
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[  81-  90, 22.50%]: SamplesSeen = 250; TrainLossPerSample =  0.16622900; EvalErr[0]PerSample = 0.04000000; TotalTime = 0.0141s; SamplesPerSecond = 17786.0
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[  91- 100, 25.00%]: SamplesSeen = 250; TrainLossPerSample =  0.17637866; EvalErr[0]PerSample = 0.05600000; TotalTime = 0.0152s; SamplesPerSecond = 16450.6
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[ 101- 110, 27.50%]: SamplesSeen = 250; TrainLossPerSample =  0.22185278; EvalErr[0]PerSample = 0.10800000; TotalTime = 0.0134s; SamplesPerSecond = 18700.0
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[ 111- 120, 30.00%]: SamplesSeen = 250; TrainLossPerSample =  0.17055811; EvalErr[0]PerSample = 0.08000000; TotalTime = 0.0141s; SamplesPerSecond = 17774.6
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[ 121- 130, 32.50%]: SamplesSeen = 250; TrainLossPerSample =  0.16481055; EvalErr[0]PerSample = 0.06400000; TotalTime = 0.0169s; SamplesPerSecond = 14814.8
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[ 131- 140, 35.00%]: SamplesSeen = 250; TrainLossPerSample =  0.13871704; EvalErr[0]PerSample = 0.04800000; TotalTime = 0.0140s; SamplesPerSecond = 17805.0
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[ 141- 150, 37.50%]: SamplesSeen = 250; TrainLossPerSample =  0.16922363; EvalErr[0]PerSample = 0.07200000; TotalTime = 0.0124s; SamplesPerSecond = 20125.6
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[ 151- 160, 40.00%]: SamplesSeen = 250; TrainLossPerSample =  0.15403345; EvalErr[0]PerSample = 0.06000000; TotalTime = 0.0140s; SamplesPerSecond = 17864.8
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[ 161- 170, 42.50%]: SamplesSeen = 250; TrainLossPerSample =  0.22255859; EvalErr[0]PerSample = 0.11200000; TotalTime = 0.0147s; SamplesPerSecond = 16963.0
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[ 171- 180, 45.00%]: SamplesSeen = 250; TrainLossPerSample =  0.18146851; EvalErr[0]PerSample = 0.09200000; TotalTime = 0.0137s; SamplesPerSecond = 18234.9
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[ 181- 190, 47.50%]: SamplesSeen = 250; TrainLossPerSample =  0.15611523; EvalErr[0]PerSample = 0.06400000; TotalTime = 0.0153s; SamplesPerSecond = 16322.8
+04/26/2016 15:43:58:  Epoch[ 2 of 3]-Minibatch[ 191- 200, 50.00%]: SamplesSeen = 250; TrainLossPerSample =  0.17320215; EvalErr[0]PerSample = 0.08800000; TotalTime = 0.0144s; SamplesPerSecond = 17369.6
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 201- 210, 52.50%]: SamplesSeen = 250; TrainLossPerSample =  0.15727930; EvalErr[0]PerSample = 0.06400000; TotalTime = 0.0141s; SamplesPerSecond = 17699.1
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 211- 220, 55.00%]: SamplesSeen = 250; TrainLossPerSample =  0.16195410; EvalErr[0]PerSample = 0.06800000; TotalTime = 0.0121s; SamplesPerSecond = 20661.2
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 221- 230, 57.50%]: SamplesSeen = 250; TrainLossPerSample =  0.16121338; EvalErr[0]PerSample = 0.06400000; TotalTime = 0.0138s; SamplesPerSecond = 18160.7
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 231- 240, 60.00%]: SamplesSeen = 250; TrainLossPerSample =  0.15427100; EvalErr[0]PerSample = 0.06800000; TotalTime = 0.0143s; SamplesPerSecond = 17449.6
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 241- 250, 62.50%]: SamplesSeen = 250; TrainLossPerSample =  0.14844775; EvalErr[0]PerSample = 0.06800000; TotalTime = 0.0141s; SamplesPerSecond = 17670.3
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 251- 260, 65.00%]: SamplesSeen = 250; TrainLossPerSample =  0.15055713; EvalErr[0]PerSample = 0.06800000; TotalTime = 0.0125s; SamplesPerSecond = 19979.2
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 261- 270, 67.50%]: SamplesSeen = 250; TrainLossPerSample =  0.15467627; EvalErr[0]PerSample = 0.07200000; TotalTime = 0.0133s; SamplesPerSecond = 18758.9
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 271- 280, 70.00%]: SamplesSeen = 250; TrainLossPerSample =  0.17615869; EvalErr[0]PerSample = 0.08400000; TotalTime = 0.0140s; SamplesPerSecond = 17914.7
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 281- 290, 72.50%]: SamplesSeen = 250; TrainLossPerSample =  0.22356104; EvalErr[0]PerSample = 0.08800000; TotalTime = 0.0142s; SamplesPerSecond = 17655.4
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 291- 300, 75.00%]: SamplesSeen = 250; TrainLossPerSample =  0.16514209; EvalErr[0]PerSample = 0.07600000; TotalTime = 0.0140s; SamplesPerSecond = 17848.2
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 301- 310, 77.50%]: SamplesSeen = 250; TrainLossPerSample =  0.17355859; EvalErr[0]PerSample = 0.08800000; TotalTime = 0.0149s; SamplesPerSecond = 16781.9
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 311- 320, 80.00%]: SamplesSeen = 250; TrainLossPerSample =  0.13117578; EvalErr[0]PerSample = 0.04800000; TotalTime = 0.0126s; SamplesPerSecond = 19828.7
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 321- 330, 82.50%]: SamplesSeen = 250; TrainLossPerSample =  0.13956104; EvalErr[0]PerSample = 0.05600000; TotalTime = 0.0122s; SamplesPerSecond = 20572.7
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 331- 340, 85.00%]: SamplesSeen = 250; TrainLossPerSample =  0.18397363; EvalErr[0]PerSample = 0.09600000; TotalTime = 0.0126s; SamplesPerSecond = 19844.4
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 341- 350, 87.50%]: SamplesSeen = 250; TrainLossPerSample =  0.15222656; EvalErr[0]PerSample = 0.05200000; TotalTime = 0.0137s; SamplesPerSecond = 18312.3
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 351- 360, 90.00%]: SamplesSeen = 250; TrainLossPerSample =  0.18856396; EvalErr[0]PerSample = 0.08400000; TotalTime = 0.0129s; SamplesPerSecond = 19311.0
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 361- 370, 92.50%]: SamplesSeen = 250; TrainLossPerSample =  0.17513330; EvalErr[0]PerSample = 0.08000000; TotalTime = 0.0120s; SamplesPerSecond = 20918.8
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 371- 380, 95.00%]: SamplesSeen = 250; TrainLossPerSample =  0.15008252; EvalErr[0]PerSample = 0.06000000; TotalTime = 0.0116s; SamplesPerSecond = 21496.1
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 381- 390, 97.50%]: SamplesSeen = 250; TrainLossPerSample =  0.12125342; EvalErr[0]PerSample = 0.06000000; TotalTime = 0.0132s; SamplesPerSecond = 18883.6
+04/26/2016 15:43:59:  Epoch[ 2 of 3]-Minibatch[ 391- 400, 100.00%]: SamplesSeen = 250; TrainLossPerSample =  0.15408496; EvalErr[0]PerSample = 0.07200000; TotalTime = 0.0122s; SamplesPerSecond = 20501.9
+04/26/2016 15:43:59: Finished Epoch[ 2 of 3]: [Training Set] TrainLossPerSample = 0.19333879; TotalSamplesSeen = 20000; EvalErrPerSample = 0.077; AvgLearningRatePerSample = 0.0080000004; EpochTime=0.546716
+04/26/2016 15:43:59: SGD: Saving checkpoint model 'E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu/Models/simple.dnn.2'
+
+04/26/2016 15:43:59: Starting Epoch 3: learning rate per sample = 0.008000  effective momentum = 0.900000  momentum as time constant = 237.3 samples
+
+04/26/2016 15:43:59: Starting minibatch loop.
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[   1-  10, 2.50%]: SamplesSeen = 250; TrainLossPerSample =  0.10746781; EvalErr[0]PerSample = 0.05200000; TotalTime = 0.0142s; SamplesPerSecond = 17654.1
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[  11-  20, 5.00%]: SamplesSeen = 250; TrainLossPerSample =  0.17648278; EvalErr[0]PerSample = 0.08400000; TotalTime = 0.0146s; SamplesPerSecond = 17064.8
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[  21-  30, 7.50%]: SamplesSeen = 250; TrainLossPerSample =  0.14106094; EvalErr[0]PerSample = 0.06800000; TotalTime = 0.0136s; SamplesPerSecond = 18352.7
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[  31-  40, 10.00%]: SamplesSeen = 250; TrainLossPerSample =  0.16348077; EvalErr[0]PerSample = 0.07200000; TotalTime = 0.0152s; SamplesPerSecond = 16490.8
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[  41-  50, 12.50%]: SamplesSeen = 250; TrainLossPerSample =  0.11767151; EvalErr[0]PerSample = 0.04000000; TotalTime = 0.0135s; SamplesPerSecond = 18539.1
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[  51-  60, 15.00%]: SamplesSeen = 250; TrainLossPerSample =  0.16217944; EvalErr[0]PerSample = 0.07600000; TotalTime = 0.0122s; SamplesPerSecond = 20490.1
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[  61-  70, 17.50%]: SamplesSeen = 250; TrainLossPerSample =  0.16171204; EvalErr[0]PerSample = 0.08000000; TotalTime = 0.0138s; SamplesPerSecond = 18054.5
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[  71-  80, 20.00%]: SamplesSeen = 250; TrainLossPerSample =  0.19844067; EvalErr[0]PerSample = 0.09200000; TotalTime = 0.0142s; SamplesPerSecond = 17595.7
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[  81-  90, 22.50%]: SamplesSeen = 250; TrainLossPerSample =  0.19984509; EvalErr[0]PerSample = 0.09200000; TotalTime = 0.0140s; SamplesPerSecond = 17868.6
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[  91- 100, 25.00%]: SamplesSeen = 250; TrainLossPerSample =  0.13727051; EvalErr[0]PerSample = 0.05200000; TotalTime = 0.0147s; SamplesPerSecond = 17001.0
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 101- 110, 27.50%]: SamplesSeen = 250; TrainLossPerSample =  0.20126648; EvalErr[0]PerSample = 0.10800000; TotalTime = 0.0182s; SamplesPerSecond = 13722.7
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 111- 120, 30.00%]: SamplesSeen = 250; TrainLossPerSample =  0.17913672; EvalErr[0]PerSample = 0.08000000; TotalTime = 0.0139s; SamplesPerSecond = 17966.2
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 121- 130, 32.50%]: SamplesSeen = 250; TrainLossPerSample =  0.15983582; EvalErr[0]PerSample = 0.06000000; TotalTime = 0.0154s; SamplesPerSecond = 16255.9
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 131- 140, 35.00%]: SamplesSeen = 250; TrainLossPerSample =  0.16260010; EvalErr[0]PerSample = 0.08000000; TotalTime = 0.0105s; SamplesPerSecond = 23829.9
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 141- 150, 37.50%]: SamplesSeen = 250; TrainLossPerSample =  0.19813428; EvalErr[0]PerSample = 0.10800000; TotalTime = 0.0121s; SamplesPerSecond = 20611.8
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 151- 160, 40.00%]: SamplesSeen = 250; TrainLossPerSample =  0.10295117; EvalErr[0]PerSample = 0.04400000; TotalTime = 0.0124s; SamplesPerSecond = 20085.2
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 161- 170, 42.50%]: SamplesSeen = 250; TrainLossPerSample =  0.17117065; EvalErr[0]PerSample = 0.08000000; TotalTime = 0.0106s; SamplesPerSecond = 23589.4
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 171- 180, 45.00%]: SamplesSeen = 250; TrainLossPerSample =  0.16661938; EvalErr[0]PerSample = 0.08400000; TotalTime = 0.0123s; SamplesPerSecond = 20254.4
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 181- 190, 47.50%]: SamplesSeen = 250; TrainLossPerSample =  0.12718042; EvalErr[0]PerSample = 0.05600000; TotalTime = 0.0145s; SamplesPerSecond = 17195.1
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 191- 200, 50.00%]: SamplesSeen = 250; TrainLossPerSample =  0.11923853; EvalErr[0]PerSample = 0.06400000; TotalTime = 0.0123s; SamplesPerSecond = 20257.7
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 201- 210, 52.50%]: SamplesSeen = 250; TrainLossPerSample =  0.12890332; EvalErr[0]PerSample = 0.06400000; TotalTime = 0.0121s; SamplesPerSecond = 20611.8
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 211- 220, 55.00%]: SamplesSeen = 250; TrainLossPerSample =  0.18205469; EvalErr[0]PerSample = 0.10000000; TotalTime = 0.0128s; SamplesPerSecond = 19555.7
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 221- 230, 57.50%]: SamplesSeen = 250; TrainLossPerSample =  0.13154199; EvalErr[0]PerSample = 0.06000000; TotalTime = 0.0136s; SamplesPerSecond = 18315.0
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 231- 240, 60.00%]: SamplesSeen = 250; TrainLossPerSample =  0.19668359; EvalErr[0]PerSample = 0.10400000; TotalTime = 0.0136s; SamplesPerSecond = 18448.8
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 241- 250, 62.50%]: SamplesSeen = 250; TrainLossPerSample =  0.15817578; EvalErr[0]PerSample = 0.07200000; TotalTime = 0.0122s; SamplesPerSecond = 20495.2
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 251- 260, 65.00%]: SamplesSeen = 250; TrainLossPerSample =  0.11871240; EvalErr[0]PerSample = 0.04400000; TotalTime = 0.0110s; SamplesPerSecond = 22694.3
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 261- 270, 67.50%]: SamplesSeen = 250; TrainLossPerSample =  0.13730908; EvalErr[0]PerSample = 0.06400000; TotalTime = 0.0132s; SamplesPerSecond = 18882.2
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 271- 280, 70.00%]: SamplesSeen = 250; TrainLossPerSample =  0.20024854; EvalErr[0]PerSample = 0.09200000; TotalTime = 0.0121s; SamplesPerSecond = 20671.4
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 281- 290, 72.50%]: SamplesSeen = 250; TrainLossPerSample =  0.18850244; EvalErr[0]PerSample = 0.10800000; TotalTime = 0.0126s; SamplesPerSecond = 19803.5
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 291- 300, 75.00%]: SamplesSeen = 250; TrainLossPerSample =  0.16640479; EvalErr[0]PerSample = 0.07200000; TotalTime = 0.0118s; SamplesPerSecond = 21111.3
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 301- 310, 77.50%]: SamplesSeen = 250; TrainLossPerSample =  0.11872168; EvalErr[0]PerSample = 0.04800000; TotalTime = 0.0127s; SamplesPerSecond = 19638.6
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 311- 320, 80.00%]: SamplesSeen = 250; TrainLossPerSample =  0.16090430; EvalErr[0]PerSample = 0.08800000; TotalTime = 0.0141s; SamplesPerSecond = 17736.8
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 321- 330, 82.50%]: SamplesSeen = 250; TrainLossPerSample =  0.16162939; EvalErr[0]PerSample = 0.06800000; TotalTime = 0.0120s; SamplesPerSecond = 20890.8
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 331- 340, 85.00%]: SamplesSeen = 250; TrainLossPerSample =  0.12408594; EvalErr[0]PerSample = 0.04800000; TotalTime = 0.0126s; SamplesPerSecond = 19853.9
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 341- 350, 87.50%]: SamplesSeen = 250; TrainLossPerSample =  0.13544434; EvalErr[0]PerSample = 0.06800000; TotalTime = 0.0149s; SamplesPerSecond = 16778.5
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 351- 360, 90.00%]: SamplesSeen = 250; TrainLossPerSample =  0.20890771; EvalErr[0]PerSample = 0.11200000; TotalTime = 0.0140s; SamplesPerSecond = 17859.7
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 361- 370, 92.50%]: SamplesSeen = 250; TrainLossPerSample =  0.16674365; EvalErr[0]PerSample = 0.08400000; TotalTime = 0.0139s; SamplesPerSecond = 17975.3
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 371- 380, 95.00%]: SamplesSeen = 250; TrainLossPerSample =  0.15033398; EvalErr[0]PerSample = 0.06400000; TotalTime = 0.0134s; SamplesPerSecond = 18686.0
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 381- 390, 97.50%]: SamplesSeen = 250; TrainLossPerSample =  0.16547705; EvalErr[0]PerSample = 0.07600000; TotalTime = 0.0157s; SamplesPerSecond = 15965.3
+04/26/2016 15:43:59:  Epoch[ 3 of 3]-Minibatch[ 391- 400, 100.00%]: SamplesSeen = 250; TrainLossPerSample =  0.16792480; EvalErr[0]PerSample = 0.08000000; TotalTime = 0.0123s; SamplesPerSecond = 20338.4
+04/26/2016 15:43:59: Finished Epoch[ 3 of 3]: [Training Set] TrainLossPerSample = 0.15806136; TotalSamplesSeen = 30000; EvalErrPerSample = 0.0747; AvgLearningRatePerSample = 0.0080000004; EpochTime=0.536272
+04/26/2016 15:43:59: SGD: Saving checkpoint model 'E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu/Models/simple.dnn'
+04/26/2016 15:43:59: CNTKCommandTrainEnd: Simple_Demo_Train
+
+04/26/2016 15:43:59: Action "train" complete.
+
+
+04/26/2016 15:43:59: ##############################################################################
+04/26/2016 15:43:59: #                                                                            #
+04/26/2016 15:43:59: # Action "test"                                                              #
+04/26/2016 15:43:59: #                                                                            #
+04/26/2016 15:43:59: ##############################################################################
+
+
+Post-processing network...
+
+7 roots:
+	CrossEntropyWithSoftmax = CrossEntropyWithSoftmax()
+	EvalErrorPrediction = ErrorPrediction()
+	InvStdOfFeatures = InvStdDev()
+	MeanOfFeatures = Mean()
+	PosteriorProb = Softmax()
+	Prior = Mean()
+	ScaledLogLikelihood = Minus()
+
+Validating network. 25 nodes to process in pass 1.
+
+Validating --> labels = InputValue() :  -> [2 x *1]
+Validating --> W2 = LearnableParameter() :  -> [2 x 50]
+Validating --> W1 = LearnableParameter() :  -> [50 x 50]
+Validating --> W0 = LearnableParameter() :  -> [50 x 2]
+Validating --> features = InputValue() :  -> [2 x *1]
+Validating --> MeanOfFeatures = Mean (features) : [2 x *1] -> [2]
+Validating --> InvStdOfFeatures = InvStdDev (features) : [2 x *1] -> [2]
+Validating --> MVNormalizedFeatures = PerDimMeanVarNormalization (features, MeanOfFeatures, InvStdOfFeatures) : [2 x *1], [2], [2] -> [2 x *1]
+Validating --> W0*features = Times (W0, MVNormalizedFeatures) : [50 x 2], [2 x *1] -> [50 x *1]
+Validating --> B0 = LearnableParameter() :  -> [50 x 1]
+Validating --> W0*features+B0 = Plus (W0*features, B0) : [50 x *1], [50 x 1] -> [50 x 1 x *1]
+Validating --> H1 = Sigmoid (W0*features+B0) : [50 x 1 x *1] -> [50 x 1 x *1]
+Validating --> W1*H1 = Times (W1, H1) : [50 x 50], [50 x 1 x *1] -> [50 x 1 x *1]
+Validating --> B1 = LearnableParameter() :  -> [50 x 1]
+Validating --> W1*H1+B1 = Plus (W1*H1, B1) : [50 x 1 x *1], [50 x 1] -> [50 x 1 x *1]
+Validating --> H2 = Sigmoid (W1*H1+B1) : [50 x 1 x *1] -> [50 x 1 x *1]
+Validating --> W2*H1 = Times (W2, H2) : [2 x 50], [50 x 1 x *1] -> [2 x 1 x *1]
+Validating --> B2 = LearnableParameter() :  -> [2 x 1]
+Validating --> HLast = Plus (W2*H1, B2) : [2 x 1 x *1], [2 x 1] -> [2 x 1 x *1]
+Validating --> CrossEntropyWithSoftmax = CrossEntropyWithSoftmax (labels, HLast) : [2 x *1], [2 x 1 x *1] -> [1]
+Validating --> EvalErrorPrediction = ErrorPrediction (labels, HLast) : [2 x *1], [2 x 1 x *1] -> [1]
+Validating --> PosteriorProb = Softmax (HLast) : [2 x 1 x *1] -> [2 x 1 x *1]
+Validating --> Prior = Mean (labels) : [2 x *1] -> [2]
+Validating --> LogOfPrior = Log (Prior) : [2] -> [2]
+Validating --> ScaledLogLikelihood = Minus (HLast, LogOfPrior) : [2 x 1 x *1], [2] -> [2 x 1 x *1]
+
+Validating network. 17 nodes to process in pass 2.
+
+
+Validating network, final pass.
+
+
+
+12 out of 25 nodes do not share the minibatch layout with the input data.
+
+Post-processing network complete.
+
+evalNodeNames are not specified, using all the default evalnodes and training criterion nodes.
+
+
+Allocating matrices for forward and/or backward propagation.
+
+Memory Sharing Structure:
+
+0000000000000000: {[B0 Gradient[50 x 1]] [B1 Gradient[50 x 1]] [B2 Gradient[2 x 1]] [CrossEntropyWithSoftmax Gradient[1]] [EvalErrorPrediction Gradient[1]] [H1 Gradient[50 x 1 x *1]] [H2 Gradient[50 x 1 x *1]] [HLast Gradient[2 x 1 x *1]] [InvStdOfFeatures Gradient[2]] [LogOfPrior Gradient[2]] [MVNormalizedFeatures Gradient[2 x *1]] [MeanOfFeatures Gradient[2]] [PosteriorProb Gradient[2 x 1 x *1]] [PosteriorProb Value[2 x 1 x *1]] [Prior Gradient[2]] [ScaledLogLikelihood Gradient[2 x 1 x *1]] [ScaledLogLikelihood Value[2 x 1 x *1]] [W0 Gradient[50 x 2]] [W0*features Gradient[50 x *1]] [W0*features+B0 Gradient[50 x 1 x *1]] [W1 Gradient[50 x 50]] [W1*H1 Gradient[50 x 1 x *1]] [W1*H1+B1 Gradient[50 x 1 x *1]] [W2 Gradient[2 x 50]] [W2*H1 Gradient[2 x 1 x *1]] [features Gradient[2 x *1]] [labels Gradient[2 x *1]] }
+000000034AD06E30: {[W1*H1+B1 Value[50 x 1 x *1]] }
+000000034AD070B0: {[W0*features+B0 Value[50 x 1 x *1]] }
+000000034AD07290: {[W2*H1 Value[2 x 1 x *1]] }
+000000034AD07330: {[EvalErrorPrediction Value[1]] }
+000000034AD075B0: {[LogOfPrior Value[2]] }
+000000034AD076F0: {[W0*features Value[50 x *1]] }
+000000034AD07790: {[MVNormalizedFeatures Value[2 x *1]] }
+000000034AD078D0: {[CrossEntropyWithSoftmax Value[1]] }
+000000034AD07E70: {[H2 Value[50 x 1 x *1]] }
+000000034AD07FB0: {[W2 Value[2 x 50]] }
+000000034AD08050: {[W1*H1 Value[50 x 1 x *1]] }
+000000034AD08230: {[H1 Value[50 x 1 x *1]] }
+000000034AD082D0: {[HLast Value[2 x 1 x *1]] }
+00000003574D31C0: {[MeanOfFeatures Value[2]] }
+00000003574D3260: {[Prior Value[2]] }
+00000003574D3440: {[InvStdOfFeatures Value[2]] }
+00000003574D3800: {[B2 Value[2 x 1]] }
+00000003574D39E0: {[B0 Value[50 x 1]] }
+00000003574D3C60: {[W0 Value[50 x 2]] }
+00000003574D45C0: {[B1 Value[50 x 1]] }
+00000003574D4660: {[features Value[2 x *1]] }
+00000003574D4840: {[W1 Value[50 x 50]] }
+00000003574D4B60: {[labels Value[2 x *1]] }
+
+Final Results: Minibatch[1-1]: SamplesSeen = 603    EvalErrorPrediction: ErrorPrediction/Sample = 0.056384743    CrossEntropyWithSoftmax: CrossEntropyWithSoftmax/Sample = 0.12740351    Perplexity = 1.1358753    
+
+04/26/2016 15:44:00: Action "test" complete.
+
+
+04/26/2016 15:44:00: ##############################################################################
+04/26/2016 15:44:00: #                                                                            #
+04/26/2016 15:44:00: # Action "write"                                                             #
+04/26/2016 15:44:00: #                                                                            #
+04/26/2016 15:44:00: ##############################################################################
+
+
+Post-processing network...
+
+8 roots:
+	CrossEntropyWithSoftmax = CrossEntropyWithSoftmax()
+	EvalErrorPrediction = ErrorPrediction()
+	InvStdOfFeatures = InvStdDev()
+	MeanOfFeatures = Mean()
+	PosteriorProb = Softmax()
+	Prior = Mean()
+	ScaledLogLikelihood = Minus()
+	labels = InputValue()
+
+Validating network. 25 nodes to process in pass 1.
+
+Validating --> labels = InputValue() :  -> [2 x *2]
+Validating --> W2 = LearnableParameter() :  -> [2 x 50]
+Validating --> W1 = LearnableParameter() :  -> [50 x 50]
+Validating --> W0 = LearnableParameter() :  -> [50 x 2]
+Validating --> features = InputValue() :  -> [2 x *2]
+Validating --> MeanOfFeatures = Mean (features) : [2 x *2] -> [2]
+Validating --> InvStdOfFeatures = InvStdDev (features) : [2 x *2] -> [2]
+Validating --> MVNormalizedFeatures = PerDimMeanVarNormalization (features, MeanOfFeatures, InvStdOfFeatures) : [2 x *2], [2], [2] -> [2 x *2]
+Validating --> W0*features = Times (W0, MVNormalizedFeatures) : [50 x 2], [2 x *2] -> [50 x *2]
+Validating --> B0 = LearnableParameter() :  -> [50 x 1]
+Validating --> W0*features+B0 = Plus (W0*features, B0) : [50 x *2], [50 x 1] -> [50 x 1 x *2]
+Validating --> H1 = Sigmoid (W0*features+B0) : [50 x 1 x *2] -> [50 x 1 x *2]
+Validating --> W1*H1 = Times (W1, H1) : [50 x 50], [50 x 1 x *2] -> [50 x 1 x *2]
+Validating --> B1 = LearnableParameter() :  -> [50 x 1]
+Validating --> W1*H1+B1 = Plus (W1*H1, B1) : [50 x 1 x *2], [50 x 1] -> [50 x 1 x *2]
+Validating --> H2 = Sigmoid (W1*H1+B1) : [50 x 1 x *2] -> [50 x 1 x *2]
+Validating --> W2*H1 = Times (W2, H2) : [2 x 50], [50 x 1 x *2] -> [2 x 1 x *2]
+Validating --> B2 = LearnableParameter() :  -> [2 x 1]
+Validating --> HLast = Plus (W2*H1, B2) : [2 x 1 x *2], [2 x 1] -> [2 x 1 x *2]
+Validating --> CrossEntropyWithSoftmax = CrossEntropyWithSoftmax (labels, HLast) : [2 x *2], [2 x 1 x *2] -> [1]
+Validating --> EvalErrorPrediction = ErrorPrediction (labels, HLast) : [2 x *2], [2 x 1 x *2] -> [1]
+Validating --> PosteriorProb = Softmax (HLast) : [2 x 1 x *2] -> [2 x 1 x *2]
+Validating --> Prior = Mean (labels) : [2 x *2] -> [2]
+Validating --> LogOfPrior = Log (Prior) : [2] -> [2]
+Validating --> ScaledLogLikelihood = Minus (HLast, LogOfPrior) : [2 x 1 x *2], [2] -> [2 x 1 x *2]
+
+Validating network. 17 nodes to process in pass 2.
+
+
+Validating network, final pass.
+
+
+
+12 out of 25 nodes do not share the minibatch layout with the input data.
+
+Post-processing network complete.
+
+
+
+Allocating matrices for forward and/or backward propagation.
+
+Memory Sharing Structure:
+
+0000000000000000: {[B0 Gradient[50 x 1]] [B1 Gradient[50 x 1]] [B2 Gradient[2 x 1]] [CrossEntropyWithSoftmax Gradient[1]] [CrossEntropyWithSoftmax Value[1]] [EvalErrorPrediction Gradient[1]] [EvalErrorPrediction Value[1]] [H1 Gradient[50 x 1 x *2]] [H2 Gradient[50 x 1 x *2]] [HLast Gradient[2 x 1 x *2]] [InvStdOfFeatures Gradient[2]] [LogOfPrior Gradient[2]] [MVNormalizedFeatures Gradient[2 x *2]] [MeanOfFeatures Gradient[2]] [PosteriorProb Gradient[2 x 1 x *2]] [Prior Gradient[2]] [ScaledLogLikelihood Gradient[2 x 1 x *2]] [ScaledLogLikelihood Value[2 x 1 x *2]] [W0 Gradient[50 x 2]] [W0*features Gradient[50 x *2]] [W0*features+B0 Gradient[50 x 1 x *2]] [W1 Gradient[50 x 50]] [W1*H1 Gradient[50 x 1 x *2]] [W1*H1+B1 Gradient[50 x 1 x *2]] [W2 Gradient[2 x 50]] [W2*H1 Gradient[2 x 1 x *2]] [features Gradient[2 x *2]] [labels Gradient[2 x *2]] }
+000000034AD06570: {[labels Value[2 x *2]] }
+000000034AD06930: {[features Value[2 x *2]] }
+000000034AD06C50: {[MeanOfFeatures Value[2]] }
+000000034AD06E30: {[Prior Value[2]] }
+000000034AD070B0: {[W0 Value[50 x 2]] }
+000000034AD07510: {[W1 Value[50 x 50]] }
+000000034AD07650: {[InvStdOfFeatures Value[2]] }
+000000034AD07DD0: {[B0 Value[50 x 1]] }
+000000034AD07E70: {[B1 Value[50 x 1]] }
+000000034AD07FB0: {[B2 Value[2 x 1]] }
+00000003574D31C0: {[LogOfPrior Value[2]] }
+00000003574D3260: {[W2 Value[2 x 50]] }
+00000003574D33A0: {[W1*H1 Value[50 x 1 x *2]] }
+00000003574D3440: {[HLast Value[2 x 1 x *2]] }
+00000003574D3580: {[W0*features Value[50 x *2]] }
+00000003574D38A0: {[W0*features+B0 Value[50 x 1 x *2]] }
+00000003574D3B20: {[W1*H1+B1 Value[50 x 1 x *2]] }
+00000003574D3BC0: {[H2 Value[50 x 1 x *2]] }
+00000003574D40C0: {[W2*H1 Value[2 x 1 x *2]] }
+00000003574D4AC0: {[PosteriorProb Value[2 x 1 x *2]] }
+00000003574D4C00: {[MVNormalizedFeatures Value[2 x *2]] }
+00000003574D4CA0: {[H1 Value[50 x 1 x *2]] }
+
+Minibatch[0]: ActualMBSize = 603
+Written to E:\cygwin64\tmp\cntk-test-20160426164356.252753\CNTKTextFormatReader\Examples\Other\Simple2d_Simple@release_gpu/SimpleOutput*
+Total Samples Evaluated = 603
+
+04/26/2016 15:44:00: Action "write" complete.
+
+04/26/2016 15:44:00: __COMPLETED__

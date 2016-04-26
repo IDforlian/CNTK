@@ -32,15 +32,13 @@ template <class ElemType>
 class TextParser<ElemType>::TextDataChunk : public Chunk, public std::enable_shared_from_this<TextDataChunk>
 {
 public:
-    explicit TextDataChunk(const ChunkDescriptor& descriptor);
+    explicit TextDataChunk(const ChunkDescriptor& descriptor, TextParser* parser);
 
     // Gets sequences by id.
     void GetSequence(size_t sequenceId, std::vector<SequenceDataPtr>& result) override;
 
-    std::map<size_t, std::vector<SequenceDataPtr>> m_sequencePtrMap;
-
-    // Buffer to store the actual data.
-    std::vector<SequenceBuffer> m_sequences;
+    // A map from sequence ids to the sequence data.
+    std::map<size_t, SequenceBuffer> m_sequenceMap;
 
     // chunk id (copied from the descriptor)
     size_t m_id;
@@ -48,6 +46,9 @@ public:
     // When this counter value reaches the number of sequences in 
     // the this chunk, it can be safely unloaded.
     size_t m_sequenceRequestCount;
+
+    // a non-owned pointer to the parser that created this chunk
+    TextParser* m_parser;
 };
 
 
@@ -58,8 +59,8 @@ struct TextParser<ElemType>::StreamInfo{
 };
 
 template <class ElemType>
-TextParser<ElemType>::TextParser(const TextConfigHelper& helper)
-    : TextParser(helper.GetFilePath(), helper.GetStreams())
+TextParser<ElemType>::TextParser(const TextConfigHelper& helper) :
+    TextParser(helper.GetFilePath(), helper.GetStreams())
 {
     SetTraceLevel(helper.GetTraceLevel());
     SetMaxAllowedErrors(helper.GetMaxAllowedErrors());
@@ -87,7 +88,8 @@ TextParser<ElemType>::TextParser(const std::wstring& filename, const vector<Stre
     m_traceLevel(TraceLevel::Error),
     m_hadWarnings(false),
     m_numAllowedErrors(0),
-    m_skipSequenceIds(false)
+    m_skipSequenceIds(false),
+    m_numRetries(5)
 {
     assert(streams.size() > 0);
 
@@ -135,8 +137,6 @@ void TextParser<ElemType>::PrintWarningNotification()
     }
 }
 
-
-
 template <class ElemType>
 void TextParser<ElemType>::Initialize()
 {
@@ -145,7 +145,7 @@ void TextParser<ElemType>::Initialize()
         return;
     }
 
-    attempt(5, [this]()
+    attempt(m_numRetries, [this]()
     {
         m_file = fopenOrDie(m_filename, L"rbS");
     });
@@ -158,7 +158,7 @@ void TextParser<ElemType>::Initialize()
 
     m_indexer = make_unique<Indexer>(m_file, m_skipSequenceIds, m_chunkSizeBytes);
 
-    attempt(5, [this]()
+    attempt(m_numRetries, [this]()
     {
         m_indexer->Build();
     });
@@ -221,23 +221,53 @@ void TextParser<ElemType>::GetSequencesForChunk(size_t chunkId, std::vector<Sequ
 }
 
 template <class ElemType>
-TextParser<ElemType>::TextDataChunk::TextDataChunk(const ChunkDescriptor& descriptor)
+TextParser<ElemType>::TextDataChunk::TextDataChunk(const ChunkDescriptor& descriptor, TextParser* parser) :
+    m_parser(parser)
 {
     m_id = descriptor.m_id;
     m_sequenceRequestCount = 0;
-    m_sequences.reserve(descriptor.m_numberOfSequences);
 }
 
 template <class ElemType>
 void TextParser<ElemType>::TextDataChunk::GetSequence(size_t sequenceId, std::vector<SequenceDataPtr>& result)
 {
-    auto it = m_sequencePtrMap.find(sequenceId);
-    assert(it != m_sequencePtrMap.end());
+    auto it = m_sequenceMap.find(sequenceId);
+    assert(it != m_sequenceMap.end());
 //TODO: Remove pragma once new randomizer is in master.
 #pragma omp atomic
     ++m_sequenceRequestCount;
-    result.reserve(it->second.size());
-    copy(it->second.begin(), it->second.end(), back_inserter(result));
+    result.reserve(m_parser->m_streamInfos.size());
+    const auto& sequenceData = it->second;
+    for (size_t j = 0; j < m_parser->m_streamInfos.size(); ++j)
+    {
+        InputStreamBuffer* input = sequenceData[j].get();
+        const StreamInfo& stream = m_parser->m_streamInfos[j];
+        SequenceDataPtr data;
+        if (stream.m_type == StorageType::dense)
+        {
+            auto denseData = make_shared<DenseSequenceData>();
+            denseData->m_sampleLayout = m_parser->m_streams[j]->m_sampleLayout;
+            data = denseData;
+        }
+        else
+        {
+            auto sparseData = make_shared<SparseSequenceData>();
+            SparseInputStreamBuffer* sparseInput = static_cast<SparseInputStreamBuffer*>(input);
+            sparseData->m_indices = sparseInput->m_indices.data();
+            sparseData->m_nnzCounts.reserve(sparseInput->m_nnzCounts.size());
+            copy(sparseInput->m_nnzCounts.begin(), sparseInput->m_nnzCounts.end(),
+                back_inserter(sparseData->m_nnzCounts));
+            sparseData->m_totalNnzCount = sparseInput->m_totalNnzCount;
+            assert(input->m_numberOfSamples == sparseInput->m_nnzCounts.size());
+            data = sparseData;
+        }
+
+        data->m_data = input->m_buffer.data();
+        data->m_numberOfSamples = input->m_numberOfSamples;
+        data->m_chunk = shared_from_this();
+        data->m_id = sequenceId;
+        result.push_back(data);
+    }
 }
 
 template <class ElemType>
@@ -255,9 +285,9 @@ ChunkPtr TextParser<ElemType>::GetChunk(size_t chunkId)
         else
         {
             const auto& chunkDescriptor = m_indexer->GetIndex()[chunkId];
-            auto textChunk = make_shared<TextDataChunk>(chunkDescriptor);
+            auto textChunk = make_shared<TextDataChunk>(chunkDescriptor, this);
 
-            attempt(5, [this, &textChunk, &chunkDescriptor]()
+            attempt(m_numRetries, [this, &textChunk, &chunkDescriptor]()
             {
                 LoadChunk(textChunk, chunkDescriptor);
             });
@@ -272,7 +302,7 @@ ChunkPtr TextParser<ElemType>::GetChunk(size_t chunkId)
                     size_t numSequencesUsed = 0;
 #pragma omp atomic
                     numSequencesUsed += chunk.m_sequenceRequestCount;
-                    size_t numSequencesLeft = chunk.m_sequences.size() - numSequencesUsed;
+                    size_t numSequencesLeft = chunk.m_sequenceMap.size() - numSequencesUsed;
                     if (numSequencesLeft < minNumSequencesLeft)
                     {
                         minNumSequencesLeft = numSequencesLeft;
@@ -299,39 +329,9 @@ void TextParser<ElemType>::LoadChunk(TextChunkPtr& chunk, const ChunkDescriptor&
 {
     for (const auto& sequenceDescriptor : descriptor.m_sequences)
     {
-        chunk->m_sequences.push_back(LoadSequence(!m_skipSequenceIds, sequenceDescriptor));
-        const auto& sequenceData = chunk->m_sequences.back();
-        vector<SequenceDataPtr> sequencePtrs(m_streamInfos.size());
-        for (size_t j = 0; j < m_streamInfos.size(); ++j)
-        {
-            const StreamInfo& stream = m_streamInfos[j];
-            if (stream.m_type == StorageType::dense)
-            {
-                DenseInputStreamBuffer* input = reinterpret_cast<DenseInputStreamBuffer*>(sequenceData[j].get());
-                auto data = make_shared<DenseSequenceData>();
-                data->m_data = input->m_buffer.data();
-                data->m_sampleLayout = m_streams[j]->m_sampleLayout;
-                data->m_numberOfSamples = input->m_numberOfSamples;
-                data->m_chunk = chunk;
-                data->m_id = sequenceDescriptor.m_id;
-                sequencePtrs[j] = data;
-            }
-            else
-            {
-                SparseInputStreamBuffer* input = reinterpret_cast<SparseInputStreamBuffer*>(sequenceData[j].get());
-                auto data = make_shared<SparseSequenceData>();
-                data->m_data = input->m_buffer.data();
-                data->m_indices = input->m_indices.data();
-                data->m_nnzCounts.reserve(input->m_nnzCounts.size());
-                copy(input->m_nnzCounts.begin(), input->m_nnzCounts.end(), back_inserter(data->m_nnzCounts));
-                data->m_totalNnzCount = input->m_totalNnzCount;
-                data->m_chunk = chunk;
-                data->m_id = sequenceDescriptor.m_id;
-                data->m_numberOfSamples = input->m_nnzCounts.size();
-                sequencePtrs[j] = data;
-            }
-        }
-        chunk->m_sequencePtrMap[sequenceDescriptor.m_id] = move(sequencePtrs);
+        chunk->m_sequenceMap.insert(make_pair(
+            sequenceDescriptor.m_id,
+            LoadSequence(!m_skipSequenceIds, sequenceDescriptor)));
     }
 }
 
@@ -599,9 +599,11 @@ bool TextParser<ElemType>::TryReadSample(SequenceBuffer& sequence, size_t& bytes
     ++m_pos;
     --bytesToRead;
 
-    if (bytesToRead && CanRead() && *m_pos == NAME_PREFIX)
+    if (bytesToRead && CanRead() && *m_pos == ESCAPE_SYMBOL)
     {
-        // Two consequent pipe symbols (||) treated as an escape sequence.        
+        // A vertical bar followed by the number sign (|#) is treated as an escape sequence, 
+        // everything that follows is ignored until the next vertical bar or the end of 
+        // row, whichever comes first.
         ++m_pos;
         --bytesToRead;
         return false;
@@ -824,7 +826,7 @@ bool TextParser<ElemType>::TryReadDenseSample(vector<ElemType>& values, size_t s
 template <class ElemType>
 bool TextParser<ElemType>::TryReadSparseSample(std::vector<ElemType>& values, std::vector<IndexType>& indices, size_t& bytesToRead)
 {
-    size_t index = 0, counter = 0;
+    size_t index = 0;
     ElemType value;
 
     while (bytesToRead && CanRead())
@@ -834,14 +836,7 @@ bool TextParser<ElemType>::TryReadSparseSample(std::vector<ElemType>& values, st
         // return as soon as we hit a non-printable or a name prefix
         if (c < VALUE_DELIMITER || c == NAME_PREFIX)
         {
-            // empty sparse samples are allowed ("|InputeName_1|InputName2..."),
-            // print a warning just in case.
-            if (counter == 0 && ShouldWarn())
-            {
-                fprintf(stderr,
-                    "WARNING: encountered an empty sparse sample at the offset  %" PRId64 "\n",
-                    GetFileOffset());
-            }
+            // empty sparse samples are allowed ("|InputeName_1|InputName2...")
             return true;
         }
 
@@ -901,7 +896,6 @@ bool TextParser<ElemType>::TryReadSparseSample(std::vector<ElemType>& values, st
 
         values.push_back(value);
         indices.push_back(static_cast<IndexType>(index));
-        counter++;
     }
 
     if (ShouldWarn())
@@ -1059,7 +1053,19 @@ bool TextParser<ElemType>::TryReadRealNumber(ElemType& value, size_t& bytesToRea
         case IntegralPart:
             if (isdigit(c))
             {
+                auto temp = number;
                 number = number * 10 + (c - '0');
+                if (temp > number)
+                {
+                    if (ShouldWarn())
+                    {
+                        fprintf(stderr,
+                            "WARNING: detected an overflow while reading a floating point value"
+                            " at the offset = %" PRId64 "\n", GetFileOffset());
+                    }
+
+                    return false;
+                }
             }
             else if (c == '.')
             {
@@ -1245,6 +1251,12 @@ template <class ElemType>
 void TextParser<ElemType>::SetChunkSize(size_t size)
 {
     m_chunkSizeBytes = size;
+}
+
+template <class ElemType>
+void TextParser<ElemType>::SetNumRetries(unsigned int numRetries)
+{
+    m_numRetries = numRetries;
 }
 
 template class TextParser<float>;

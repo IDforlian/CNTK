@@ -111,6 +111,8 @@ private:
     bool m_hadWarnings;
     unsigned int m_numAllowedErrors;
     bool m_skipSequenceIds;
+    unsigned int m_numRetries; // specifies the number of times an unsuccessful 
+    // file operation should be repeated (default value is 5).
 
     // A map of currently loaded chunks
     // TODO: remove caching once partial randomization is in master.
@@ -143,7 +145,7 @@ private:
     // Reads dense sample values into the provided vector.
     bool TryReadDenseSample(std::vector<ElemType>& values, size_t sampleSize, size_t& bytesToRead);
 
-    // Reads sparse sample values and corresponging indices into the provided vectors.
+    // Reads sparse sample values and corresponding indices into the provided vectors.
     bool TryReadSparseSample(std::vector<ElemType>& values, std::vector<IndexType>& indices, size_t& bytesToRead);
 
     // Reads one sample (an input identifier followed by a list of values)
@@ -155,13 +157,13 @@ private:
     // Returns true if there's still data available.
     bool inline CanRead() { return m_pos != m_bufferEnd || TryRefillBuffer(); }
 
-    // Returns true trace level greater or equal to "Warning'
+    // Returns true if the trace level is greater or equal to 'Warning'
     bool inline ShouldWarn() { m_hadWarnings = true; return m_traceLevel >= Warning; }
 
-    // Given a descriptor, retrieves the data for the corresponging sequence from the file.
+    // Given a descriptor, retrieves the data for the corresponding sequence from the file.
     SequenceBuffer LoadSequence(bool verifyId, const SequenceDescriptor& descriptor);
 
-    // Given a descriptor, retrieves the data for the corresponging chunk from the file.
+    // Given a descriptor, retrieves the data for the corresponding chunk from the file.
     void LoadChunk(TextChunkPtr& chunk, const ChunkDescriptor& descriptor);
 
     TextParser(const std::wstring& filename, const vector<StreamDescriptor>& streams);
@@ -175,6 +177,8 @@ private:
     void SetChunkSize(size_t size);
 
     void SetChunkCacheSize(unsigned int size);
+
+    void SetNumRetries(unsigned int numRetries);
 
     friend class CNTKTextFormatReaderTestRunner<ElemType>;
 

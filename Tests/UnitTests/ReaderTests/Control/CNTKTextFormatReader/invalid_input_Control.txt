@@ -1,0 +1,34 @@
+WARNING: sparse index value (2147483648) at the offset = 65 exceeds the maximum allowed value (2147483647)
+WARNING: detected an overflow while reading a uint64 at the offset = 100
+WARNING: encountered an unexpected prefix(',') while reading a floating point value at the offset = 128
+WARNING: encountered an unexpected prefix(':') while reading a floating point value at the offset = 153
+WARNING: encountered an unexpected prefix(':') while reading a floating point value at the offset = 180
+WARNING: encountered an unexpected character(' ') in place of the index delimiter (':') after a sparse value index at the offset = 204
+WARNING: encountered an unexpected character('.') in place of the index delimiter (':') after a sparse value index at the offset = 220
+WARNING: encountered an unexpected character(';') in place of the index delimiter (':') after a sparse value index at the offset = 237
+WARNING: encountered an unexpected prefix('#') while reading a floating point value at the offset = 247
+WARNING: encountered an unexpected prefix('f') while reading a floating point value at the offset = 286
+WARNING: encountered an unexpected character('.') in place of the index delimiter (':') after a sparse value index at the offset = 310
+WARNING: encountered an unexpected character('.') in place of the index delimiter (':') after a sparse value index at the offset = 327
+WARNING: encountered a name prefix ('|') followed by an unexpected character (' ') while reading an input name at the offset = 375
+WARNING: encountered a name prefix ('|') followed by an unexpected character (' ') while reading an input name at the offset = 406
+WARNING: found an invalid input name ('C') while reading an input name at the offset = 472
+WARNING: input row (file offset = 478) is empty.
+WARNING: could not read a row (# 8) while loading sequence (id = 3) at the offset = 478
+WARNING: exhausted all input expected for the current sequence (id = 3), but only read 8 out of 9 expected rows, at the offset = 478
+WARNING: encountered a name prefix ('|') followed by an unexpected character (' ') while reading an input name at the offset = 497
+WARNING: input row (file offset = 500) is empty.
+WARNING: could not read a row (# 1) while loading sequence (id = 4) at the offset = 500
+WARNING: input row (file offset = 517) is empty.
+WARNING: could not read a row (# 3) while loading sequence (id = 4) at the offset = 517
+WARNING: encountered a name prefix ('|') followed by an unexpected character ('
+') while reading an input name at the offset = 518
+WARNING: input row (file offset = 520) is empty.
+WARNING: could not read a row (# 4) while loading sequence (id = 4) at the offset = 520
+WARNING: input row (file offset = 524) is empty.
+WARNING: could not read a row (# 5) while loading sequence (id = 4) at the offset = 524
+WARNING: exhausted all input expected for the current sequence (id = 4), but only read 3 out of 7 expected rows, at the offset = 549
+WARNING: exhausted all input expected for the current sequence while reading a floating point value at the offset = 579
+WARNING: exhausted all input expected for the current sequence while reading an input row at the offset = 579. Possibly, a trailing newline is missing.
+WARNING: could not read a row (# 1) while loading sequence (id = 5) at the offset = 579
+WARNING: exhausted all input expected for the current sequence (id = 5), but only read 1 out of 2 expected rows, at the offset = 579

@@ -152,6 +152,23 @@ struct ReaderFixture
         }
     }
 
+    // Helper function to compare files and verify that they are equivalent content-wise 
+    // (identical character content ignoring differences in white spaces).
+    void CheckFilesEquivalent(
+        string filename1,
+        string filename2)
+    {
+        std::ifstream ifstream1(filename1);
+        std::ifstream ifstream2(filename2);
+
+        std::istream_iterator<char> beginStream1(ifstream1);
+        std::istream_iterator<char> endStream1;
+        std::istream_iterator<char> beginStream2(ifstream2);
+        std::istream_iterator<char> endStream2;
+
+        BOOST_CHECK_EQUAL_COLLECTIONS(beginStream1, endStream1, beginStream2, endStream2);
+    }
+
     // Helper function to write the Reader's content to a file.
     // outputFile       : the file stream to output to.
     // dataReader       : the DataReader to get minibatches from
@@ -221,7 +238,7 @@ struct ReaderFixture
     // numLabelFiles        : the number of label files used (multi IO)
     // subsetNum            : the subset number for parallel trainings
     // numSubsets           : the number of parallel trainings (set to 1 for single)
-    // sparseFetures        : indicated whether the corresponding matrix type should be set to sparse or not
+    // sparseFeatures       : indicates whether the corresponding matrix type should be set to sparse or not
     // sparseLabels         : same as above, but for labels
     // useSharedLayout      : if false, an individual layout is created for each input
 
@@ -303,15 +320,7 @@ struct ReaderFixture
 
         outputFile.close();
 
-        std::ifstream ifstream1(controlDataFilePath);
-        std::ifstream ifstream2(testDataFilePath);
-
-        std::istream_iterator<char> beginStream1(ifstream1);
-        std::istream_iterator<char> endStream1;
-        std::istream_iterator<char> beginStream2(ifstream2);
-        std::istream_iterator<char> endStream2;
-
-        BOOST_CHECK_EQUAL_COLLECTIONS(beginStream1, endStream1, beginStream2, endStream2);
+        CheckFilesEquivalent(controlDataFilePath, testDataFilePath);
     }
 
     // Helper function to run a Reader test and catch an expected exception.

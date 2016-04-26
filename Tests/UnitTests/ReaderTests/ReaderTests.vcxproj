@@ -61,7 +61,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Common\Include;$(SolutionDir)Source\Math;$(SolutionDir)Source\Readers\ReaderLib;$(BOOST_INCLUDE_PATH)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source\Readers\CNTKTextFormatReader;$(SolutionDir)Source\Common\Include;$(SolutionDir)Source\Math;$(SolutionDir)Source\Readers\ReaderLib;$(BOOST_INCLUDE_PATH)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir);$(OutDir)..;$(BOOST_LIB_PATH)</AdditionalLibraryDirectories>
@@ -120,6 +120,7 @@
     <ClCompile Include="..\..\..\Source\Common\File.cpp" />
     <ClCompile Include="..\..\..\Source\Common\fileutil.cpp" />
     <ClCompile Include="..\..\..\Source\Common\TimerUtility.cpp" />
+    <ClCompile Include="..\..\..\Source\Readers\CNTKTextFormatReader\Indexer.cpp" />
     <ClCompile Include="CNTKTextFormatReaderTests.cpp" />
     <ClCompile Include="HTKLMFReaderTests.cpp" />
     <ClCompile Include="ImageReaderTests.cpp" />
@@ -128,6 +129,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="UCIFastReaderTests.cpp" />
+    <ClCompile Include="..\..\..\Source\Readers\CNTKTextFormatReader\TextParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Config\HTKMLFReaderSimpleDataLoop10_Config.cntk" />
@@ -188,6 +190,7 @@
     <Text Include="Data\CNTKTextFormatReader\contains_blank_lines.txt" />
     <Text Include="Data\CNTKTextFormatReader\duplicate_inputs.txt" />
     <Text Include="Data\CNTKTextFormatReader\empty_samples.txt" />
+    <Text Include="Data\CNTKTextFormatReader\invalid_input.txt" />
     <Text Include="Data\CNTKTextFormatReader\ref_data_with_escape_sequences.txt" />
     <Text Include="Data\CNTKTextFormatReader\space_separated.txt" />
     <Text Include="Data\CNTKTextFormatReader\MNIST_dense.txt" />

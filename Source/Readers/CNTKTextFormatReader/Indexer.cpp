@@ -87,7 +87,6 @@ void Indexer::BuildFromLines()
             sd.m_fileOffsetBytes = offset;
             offset = GetFileOffset() + 1;
             sd.m_byteSize = offset - sd.m_fileOffsetBytes;
-            // TODO: ignore empty lines.
             AddSequence(sd);
             ++m_pos;
             ++lines;
@@ -98,8 +97,10 @@ void Indexer::BuildFromLines()
         }
     }
 
-    if (m_pos != m_bufferEnd)
+    if (offset < m_fileOffsetEnd)
     {
+        // There's a number of characters, not terminated by a newline,
+        // add a sequence to the index, parser will have to deal with it.
         SequenceDescriptor sd = {};
         sd.m_id = lines;
         sd.m_numberOfSamples = 1;
@@ -213,8 +214,8 @@ bool Indexer::TryGetSequenceId(size_t& id)
         while (m_pos != m_bufferEnd)
         {
             char c = *m_pos;
-            // a well-formed sequence id must end in either a column delimiter 
-            // or a name prefix
+            // a well-formed sequence id must end in either a column delimiter,
+            // a value delimiter or a name prefix
             if (c == VALUE_DELIMITER || c == COLUMN_DELIMITER || c == NAME_PREFIX)
             {
                 return found;
@@ -227,10 +228,9 @@ bool Indexer::TryGetSequenceId(size_t& id)
 
             if (!isdigit(c))
             {
-                // TODO: ignore malformed sequences
-                RuntimeError("Unexpected character('%c')"
-                    " while reading a sequence id"
-                    " at the offset = %" PRIi64 "\n", c, GetFileOffset());
+                // Found some bogus line prefix, ignore it for not, 
+                // parser will have to deal with it.
+                return false;
             }
 
             found |= true;
@@ -238,20 +238,18 @@ bool Indexer::TryGetSequenceId(size_t& id)
             id = id * 10 + (c - '0');
             if (temp > id)
             {
-                // TODO: ignore malformed sequences
-                RuntimeError("Size_t overflow while reading a sequence id"
-                    " at the offset = %" PRIi64 "\n", GetFileOffset());
+                // Line prefix is too large to fit in a sequence id (will overflow), 
+                // ignore it for not, parser will have to deal with it.
+                return false;
             }
             ++m_pos;
         }
         RefillBuffer();
     }
 
-    // TODO: ignore malformed sequences
-    // reached EOF without hitting the pipe character.
-    RuntimeError("Reached the end of file "
-        " while reading a sequence id"
-        " at the offset = %" PRIi64 "\n", GetFileOffset());
+    // reached EOF without hitting the pipe character,
+    // ignore it for not, parser will have to deal with it.
+    return false;
 }
 
 }}}

@@ -4,10 +4,40 @@
 //
 #include "stdafx.h"
 #include "Common/ReaderTestHelper.h"
+#include "TextParser.h"
 
 using namespace Microsoft::MSR::CNTK;
 
-namespace Microsoft { namespace MSR { namespace CNTK { namespace Test {
+namespace Microsoft { namespace MSR { namespace CNTK {
+
+// A thin wrapper around CNTK text format reader
+template <class ElemType>
+class CNTKTextFormatReaderTestRunner
+{
+    TextParser<ElemType> m_parser;
+
+public:
+    ChunkPtr m_chunk;
+
+    CNTKTextFormatReaderTestRunner(const std::string& filename,
+        const vector<StreamDescriptor>& streams, unsigned int maxErrors) :
+        m_parser(wstring(filename.begin(), filename.end()), streams)
+    {
+        m_parser.SetMaxAllowedErrors(maxErrors);
+        m_parser.SetTraceLevel(TextParser<ElemType>::TraceLevel::Warning);
+        m_parser.SetChunkSize(SIZE_MAX);
+        m_parser.SetChunkCacheSize(1);
+        m_parser.SetNumRetries(0);
+        m_parser.Initialize();
+    }
+    // Retrieves a chunk of data.
+    void LoadChunk()
+    {
+        m_chunk = m_parser.GetChunk(0);
+    }
+};
+
+namespace Test {
 
 struct CNTKTextFormatReaderFixture : ReaderFixture
 {
@@ -542,6 +572,41 @@ BOOST_AUTO_TEST_CASE(CNTKTextFormatReader_ref_data_with_escape_sequences)
         true, // sparse features
         false, // dense labels
         false); // do not use shared layout
+};
+
+// input contains a number of empty sparse samples
+BOOST_AUTO_TEST_CASE(CNTKTextFormatReader_invalid_input)
+{
+    vector<StreamDescriptor> streams(2);
+    streams[0].m_alias = "A";
+    streams[0].m_name = L"A";
+    streams[0].m_storageType = StorageType::dense;
+    streams[0].m_sampleDimension = 1;
+
+    streams[1].m_alias = "B";
+    streams[1].m_name = L"B";
+    streams[1].m_storageType = StorageType::sparse_csc;
+    streams[1].m_sampleDimension = 10;
+
+    CNTKTextFormatReaderTestRunner<float> testRunner(
+        currentPath() + "/CNTKTextFormatReader/invalid_input.txt", streams, 99999);
+
+    auto output = testDataPath() + "/Control/CNTKTextFormatReader/invalid_input_Output.txt";
+    freopen(output.c_str(), "w", stderr);
+    try
+    {
+        testRunner.LoadChunk();
+    }
+    catch (...)
+    {
+        fclose(stderr);
+        throw;
+    }
+    fclose(stderr);
+
+    auto control = testDataPath() + "/Control/CNTKTextFormatReader/invalid_input_Control.txt";
+
+    CheckFilesEquivalent(control, output);
 };
 
 BOOST_AUTO_TEST_SUITE_END()
